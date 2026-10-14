@@ -1,0 +1,472 @@
+{
+  "schemaVersion": 1,
+  "promptVersion": "1.0.0",
+  "projectId": "narita-2026-10-10",
+  "title": "一个人在日本散步 / 成田篇",
+  "destination": "成田山新胜寺（含成田山表参道、成田山公园）",
+  "shootDate": "2026-10-10",
+  "shootWindow": "10:00–14:30",
+  "camera": "Sony ZV-1",
+  "orientation": "landscape",
+  "videoResolution": "4K 24/30p",
+  "targetVideoMinutes": 7.5,
+  "stylePresetId": "gentle-piano-vlog-v2",
+  "notes": [
+    "本例拍摄计划源于历史成田篇，现场拍摄风格与后期默认剪映预设可以分别保存。",
+    "拍摄无需拍满，不能把未拍镜头当已有素材。"
+  ],
+  "editingTimeline": [
+    [
+      "00:00–00:40",
+      "机场/电车/成田站"
+    ],
+    [
+      "00:40–03:10",
+      "表参道与仲町下坡"
+    ],
+    [
+      "03:10–05:10",
+      "新胜寺门与三重塔"
+    ],
+    [
+      "05:10–06:50",
+      "公园、池塘、风声"
+    ],
+    [
+      "06:50–07:30",
+      "吃饭、离开、车窗结尾"
+    ]
+  ],
+  "sections": [
+    {
+      "id": "airport",
+      "time": "10:00–10:45",
+      "title": "机场 → 京成成田站",
+      "subtitle": "开场，交代“送完人之后，决定散散步” · 本段6条",
+      "tip": "站在安全线内；不追拍或妨碍旅客。",
+      "shots": [
+        {
+          "id": "01",
+          "title": "机场大厅",
+          "description": "站稳，拍旅客拖行李从画面经过；不追着人拍",
+          "clipCount": 1,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "02",
+          "title": "「鉄道」指示牌",
+          "description": "固定拍指示牌，顺带交代路线",
+          "clipCount": 1,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "03",
+          "title": "京成电车",
+          "description": "安全线内固定拍进站或离站",
+          "clipCount": 1,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "04",
+          "title": "车窗外",
+          "description": "靠窗固定拍沿路景色，不要来回摇镜头",
+          "clipCount": 1,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "05",
+          "title": "站台 / 自己的脚步",
+          "description": "下车后拍10秒，注意别挡住旅客",
+          "clipCount": 1,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "06",
+          "title": "京成成田站入口",
+          "description": "拍站名或出口的外景，作为散步开始",
+          "clipCount": 1,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        }
+      ],
+      "referenceImages": []
+    },
+    {
+      "id": "omotesando",
+      "time": "10:45–11:45",
+      "title": "成田山表参道",
+      "subtitle": "全片重点：仲町下坡、街道纵深、木造老铺 · 本段22条",
+      "tip": "表参道必拍：仲町下坡——坡顶安全位置固定15秒，换位置再拍15秒，最后慢慢前进10秒。不要站到车道上。",
+      "shots": [
+        {
+          "id": "07",
+          "title": "表参道入口",
+          "description": "固定广角：入口招牌一条、向前延伸的街道一条",
+          "clipCount": 2,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "08",
+          "title": "街道全景",
+          "description": "在3个不同安全位置架稳相机，等路人经过",
+          "clipCount": 3,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "09",
+          "title": "慢慢向前走",
+          "description": "ZV-1放胸口附近，步伐放慢，不左右晃",
+          "clipCount": 2,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "10",
+          "title": "★ 仲町下坡",
+          "description": "从坡顶安全步行区拍整条下坡街道；再换2个机位",
+          "clipCount": 3,
+          "recordSeconds": 15,
+          "priority": "must",
+          "completed": false
+        },
+        {
+          "id": "11",
+          "title": "街道弯道",
+          "description": "让两侧木造建筑形成纵深，固定拍摄",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "12",
+          "title": "木造建筑细节",
+          "description": "屋檐、木格窗、二楼立面各一条",
+          "clipCount": 3,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "13",
+          "title": "老店细节",
+          "description": "暖帘、灯笼、日文招牌各一条",
+          "clipCount": 3,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "14",
+          "title": "鳗鱼店外",
+          "description": "店铺门面、公共区域能看到的烟气或料理动作；避免挡路",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "15",
+          "title": "街道生活感",
+          "description": "店铺陈列、街角小物、行人走过的日常感",
+          "clipCount": 2,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        }
+      ],
+      "referenceImages": [
+        {
+          "caption": "表参道传统街道：参考远景构图",
+          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Omotesando%20to%20Naritasan%20Shinshoji%20Temple%20%40%20Narita%20%2815262961661%29.jpg?width=960",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Omotesando_to_Naritasan_Shinshoji_Temple_%40_Narita_%2815262961661%29.jpg",
+          "author": "Guilhem Vellut",
+          "license": "CC BY 2.0"
+        },
+        {
+          "caption": "老街局部：参考建筑和店面中景",
+          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Omotesando%20to%20Naritasan%20Shinshoji%20Temple%20%40%20Narita%20%2815079298329%29.jpg?width=960",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Omotesando_to_Naritasan_Shinshoji_Temple_%40_Narita_%2815079298329%29.jpg",
+          "author": "Guilhem Vellut",
+          "license": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "id": "shinji",
+      "time": "11:45–12:30",
+      "title": "成田山新胜寺",
+      "subtitle": "固定机位为主，少一点移动，多一点寺院环境声 · 本段16条",
+      "tip": "拍摄礼仪：以室外允许拍摄的区域为主；不拍大本堂内部和宗教仪式，别挡住参拜动线。",
+      "shots": [
+        {
+          "id": "16",
+          "title": "总门",
+          "description": "站远拍全景；换安全位置再拍一条",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "17",
+          "title": "走进总门",
+          "description": "慢慢往前走10秒，镜头不要大幅转动",
+          "clipCount": 1,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "18",
+          "title": "仁王门",
+          "description": "建筑整体+上方屋顶结构",
+          "clipCount": 2,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "19",
+          "title": "台阶 / 脚步",
+          "description": "边上行边拍时尤其注意脚下；不安全就跳过",
+          "clipCount": 1,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "20",
+          "title": "香炉",
+          "description": "固定拍香烟向上飘；前提是现场允许",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "21",
+          "title": "大本堂外景",
+          "description": "固定广角，等待参拜者自然经过",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "22",
+          "title": "★ 三重塔",
+          "description": "塔身完整画面一条、中景一条",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "must",
+          "completed": false
+        },
+        {
+          "id": "23",
+          "title": "三重塔细节",
+          "description": "飞檐和雕刻分别拍10秒",
+          "clipCount": 2,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "24",
+          "title": "寺院广场",
+          "description": "广场全景与院内安静小景各一条",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        }
+      ],
+      "referenceImages": [
+        {
+          "caption": "新胜寺总门：参考正面广角",
+          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Naritasan-Shinshoji-Somon.jpg?width=960",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Naritasan-Shinshoji-Somon.jpg",
+          "author": "Joel Bradshaw",
+          "license": "CC0"
+        },
+        {
+          "caption": "三重塔：参考结构与装饰特写",
+          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Three%20story%20pagoda%2C%20Naritasan%20Shinshoji%20Temple.JPG?width=960",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Three_story_pagoda%2C_Naritasan_Shinshoji_Temple.JPG",
+          "author": "John Hill",
+          "license": "CC BY-SA 3.0"
+        }
+      ]
+    },
+    {
+      "id": "park",
+      "time": "12:30–13:20",
+      "title": "成田山公园",
+      "subtitle": "池塘、树林、浮御堂；这一段主要听环境声 · 本段15条",
+      "tip": "时间不够：池塘2条、浮御堂2条、树叶2条、环境声1条即可。有封闭或湿滑路段就不进入。",
+      "shots": [
+        {
+          "id": "25",
+          "title": "林间道路",
+          "description": "固定拍向远处延伸的小路，让行人自然入画",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "26",
+          "title": "树叶与阳光",
+          "description": "镜头不动，等风吹树叶、光影变化",
+          "clipCount": 2,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "27",
+          "title": "★ 池塘水面",
+          "description": "水波与反光各拍一条",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "must",
+          "completed": false
+        },
+        {
+          "id": "28",
+          "title": "浮御堂",
+          "description": "亭子远景一条、水中倒影一条",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "29",
+          "title": "锦鲤游动",
+          "description": "有鱼才拍，没有就直接跳过",
+          "clipCount": 1,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "30",
+          "title": "庭园小景",
+          "description": "石桥、树根、石头等，挑2个细节",
+          "clipCount": 2,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "31",
+          "title": "池塘远景",
+          "description": "用树枝做前景，拍对岸风景",
+          "clipCount": 2,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "32",
+          "title": "★ 单独收环境声",
+          "description": "树林/鸟鸣30秒、水声30秒，相机固定别说话",
+          "clipCount": 2,
+          "recordSeconds": 30,
+          "priority": "must",
+          "completed": false
+        }
+      ],
+      "referenceImages": [
+        {
+          "caption": "成田山公园：参考水面与亭子构图",
+          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Naritasan%20Park%2C%20Narita%2C%20Japan%20%285970814616%29.jpg?width=960",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Naritasan_Park%2C_Narita%2C_Japan_%285970814616%29.jpg",
+          "author": "Peter Broster",
+          "license": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "id": "return",
+      "time": "13:20–14:30",
+      "title": "午饭 → 回程",
+      "subtitle": "给视频一个安静的结尾，不必强行打卡 · 本段8条",
+      "tip": "餐馆拍摄遵循店内规则；没有吃到的食物不要在剪映脚本里虚构。",
+      "shots": [
+        {
+          "id": "33",
+          "title": "回程老街",
+          "description": "从返程方向选2个与来时不同的街景",
+          "clipCount": 2,
+          "recordSeconds": 12,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "34",
+          "title": "食物",
+          "description": "小吃/餐食端上来，以及食物近景",
+          "clipCount": 2,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "35",
+          "title": "茶杯 / 休息",
+          "description": "拍杯子或窗外10秒",
+          "clipCount": 1,
+          "recordSeconds": 10,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "36",
+          "title": "成田站入口",
+          "description": "固定拍站名，作为离开老街的过渡",
+          "clipCount": 1,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "37",
+          "title": "返程电车",
+          "description": "安全位置拍进站或驶离",
+          "clipCount": 1,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        },
+        {
+          "id": "38",
+          "title": "回程车窗",
+          "description": "静静拍窗外15秒，剪辑结尾可留8–10秒",
+          "clipCount": 1,
+          "recordSeconds": 15,
+          "priority": "normal",
+          "completed": false
+        }
+      ],
+      "referenceImages": []
+    }
+  ]
+}

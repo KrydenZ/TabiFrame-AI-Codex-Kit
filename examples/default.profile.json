@@ -1,0 +1,17 @@
+{
+  "id": "default-quiet-japan-walk",
+  "name": "一个人在日本散步",
+  "camera": "Sony ZV-1",
+  "aspectRatio": "16:9",
+  "resolution": "4K",
+  "fps": "24/30p",
+  "videoMinutes": 7.5,
+  "narration": "none",
+  "style": "安静、克制、第一人称陪伴式散步，按当天真实顺序",
+  "shotRecordSeconds": {"static": 15, "walking": 10, "detail": 10, "ambience": 30},
+  "editingPresetId": "gentle-piano-vlog-v2",
+  "allowPresetSwitch": true,
+  "subtitleLanguage": "zh-CN",
+  "music": "柔和钢琴或安静轻音乐，关键环境声降低 BGM",
+  "special": "不要快剪、不要卡点、不要配音，镜头前后留1–2秒，优先保证户外现场可执行性"
+}
