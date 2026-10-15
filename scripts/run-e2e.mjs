@@ -1,27 +1,33 @@
 import { spawn } from 'node:child_process';
 
+const port = 4173;
+const baseUrl = `http://127.0.0.1:${port}`;
+
 const server = spawn(
   process.execPath,
-  ['./node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1'],
+  ['./node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'],
   { cwd: process.cwd(), stdio: 'inherit' },
 );
 
 let shuttingDown = false;
 
-function stopServer() {
+async function stopServer() {
   if (shuttingDown) return;
   shuttingDown = true;
+  if (server.exitCode !== null) return;
   server.kill('SIGTERM');
+  await Promise.race([
+    new Promise((resolve) => server.once('exit', resolve)),
+    new Promise((resolve) => setTimeout(resolve, 2_000)),
+  ]);
 }
 
 process.once('SIGINT', () => {
-  stopServer();
-  process.exit(130);
+  void stopServer().finally(() => { process.exitCode = 130; });
 });
 
 process.once('SIGTERM', () => {
-  stopServer();
-  process.exit(143);
+  void stopServer().finally(() => { process.exitCode = 143; });
 });
 
 async function waitForServer() {
@@ -31,7 +37,7 @@ async function waitForServer() {
       throw new Error('Vite preview exited before it became ready.');
     }
     try {
-      const response = await fetch('http://127.0.0.1:4173/', {
+      const response = await fetch(baseUrl + '/', {
         signal: AbortSignal.timeout(750),
       });
       if (response.ok) return;
@@ -48,15 +54,15 @@ try {
   const runner = spawn(
     process.execPath,
     ['./node_modules/@playwright/test/cli.js', 'test'],
-    { cwd: process.cwd(), stdio: 'inherit' },
+    { cwd: process.cwd(), stdio: 'inherit', env: { ...process.env, TABIFRAME_E2E_BASE_URL: baseUrl } },
   );
   const exitCode = await new Promise((resolve) => {
     runner.once('exit', (code, signal) => resolve(code ?? (signal ? 1 : 0)));
   });
-  stopServer();
-  process.exit(exitCode);
+  await stopServer();
+  process.exitCode = exitCode;
 } catch (error) {
   console.error(error);
-  stopServer();
-  process.exit(1);
+  await stopServer();
+  process.exitCode = 1;
 }

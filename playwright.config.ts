@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: process.env.TABIFRAME_E2E_BASE_URL ?? 'http://127.0.0.1:4173',
     trace: 'on-first-retry',
   },
   projects: [

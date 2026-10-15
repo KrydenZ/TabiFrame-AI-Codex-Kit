@@ -25,7 +25,7 @@ export function ShotRow({ shot, checked, disabled = false, onChange }: ShotRowPr
         </span>
         <span className="shot-description">{shot.description}</span>
       </span>
-      <span className="clip-badge">{shot.clipCount}条 × {shot.recordSeconds}秒</span>
+      <span className="clip-badge">计划 {shot.clipCount}条 × {shot.recordSeconds}秒</span>
     </label>
   );
 }

@@ -1,13 +1,24 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { App } from './app/App';
+import { AppErrorBoundary } from './app/AppErrorBoundary';
+import { ensureSeedProjects } from './db/projects';
 import './styles/index.css';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-);
+async function bootstrap() {
+  let startupError: string | null = null;
+  try {
+    await ensureSeedProjects();
+  } catch (error) {
+    console.error('TabiFrame 本机项目初始化失败', error);
+    startupError = error instanceof Error ? error.message : '未知存储错误';
+  }
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <AppErrorBoundary><HashRouter><App startupError={startupError} /></HashRouter></AppErrorBoundary>
+    </StrictMode>,
+  );
+}
+
+void bootstrap();

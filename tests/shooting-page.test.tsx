@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach } from 'vitest';
 import { db } from '../src/db/database';
+import { ensureSeedProjects } from '../src/db/projects';
 import { ShootingPage } from '../src/pages/ShootingPage';
 
 function renderPage() {
@@ -17,6 +18,8 @@ function renderPage() {
 
 beforeEach(async () => {
   await db.shotProgress.clear();
+  await db.projects.clear();
+  await ensureSeedProjects();
 });
 
 afterEach(() => {
@@ -28,10 +31,10 @@ describe('ShootingPage progress', () => {
     const user = userEvent.setup();
     renderPage();
 
-    expect(screen.getAllByRole('checkbox')).toHaveLength(38);
+    expect(await screen.findAllByRole('checkbox')).toHaveLength(38);
     expect(screen.getAllByRole('figure')).toHaveLength(5);
 
-    const shot10 = screen.getByRole('checkbox', { name: '10 ★ 仲町下坡' });
+    const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
     await user.click(shot10);
 
@@ -42,14 +45,14 @@ describe('ShootingPage progress', () => {
   it('restores the saved checkbox after remounting', async () => {
     const user = userEvent.setup();
     const first = renderPage();
-    const shot10 = screen.getByRole('checkbox', { name: '10 ★ 仲町下坡' });
+    const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
     await user.click(shot10);
     await screen.findByText('已保存到当前浏览器');
     first.unmount();
 
     renderPage();
-    const restored = screen.getByRole('checkbox', { name: '10 ★ 仲町下坡' });
+    const restored = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(restored).toBeChecked());
     expect(screen.getByTestId('progress-count')).toHaveTextContent('1 / 38组完成 · 3 / 67条');
   });
@@ -57,7 +60,7 @@ describe('ShootingPage progress', () => {
   it('does not reset when the user cancels the confirmation', async () => {
     const user = userEvent.setup();
     renderPage();
-    const shot10 = screen.getByRole('checkbox', { name: '10 ★ 仲町下坡' });
+    const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
     await user.click(shot10);
     await screen.findByText('已保存到当前浏览器');
@@ -73,7 +76,7 @@ describe('ShootingPage progress', () => {
   it('clears persisted progress after confirmation', async () => {
     const user = userEvent.setup();
     renderPage();
-    const shot10 = screen.getByRole('checkbox', { name: '10 ★ 仲町下坡' });
+    const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
     await user.click(shot10);
     await screen.findByText('已保存到当前浏览器');
@@ -87,9 +90,9 @@ describe('ShootingPage progress', () => {
     confirmSpy.mockRestore();
   });
 
-  it('keeps source attribution when all remote images fail', () => {
+  it('keeps source attribution when all remote images fail', async () => {
     renderPage();
-    const images = screen.getAllByRole('img');
+    const images = await screen.findAllByRole('img');
     expect(images).toHaveLength(5);
     images.forEach((image) => fireEvent.error(image));
 

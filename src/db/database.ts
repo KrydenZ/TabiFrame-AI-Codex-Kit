@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import type { VlogProject } from '../domain/schemas/project';
 
 export interface ShotProgressRecord {
   key: string;
@@ -9,11 +10,14 @@ export interface ShotProgressRecord {
 }
 
 class TabiFrameDatabase extends Dexie {
+  projects!: EntityTable<VlogProject, 'projectId'>;
   shotProgress!: EntityTable<ShotProgressRecord, 'key'>;
 
   constructor() {
     super('tabiframe-ai');
-    this.version(1).stores({
+    this.version(1).stores({ shotProgress: '&key, projectId, shotId, updatedAt' });
+    this.version(2).stores({
+      projects: '&projectId, destination, sourceKind, updatedAt',
       shotProgress: '&key, projectId, shotId, updatedAt',
     });
   }

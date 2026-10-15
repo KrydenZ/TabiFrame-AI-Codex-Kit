@@ -1,4 +1,4 @@
-import { ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ShieldCheck } from 'lucide-react';
 import type { ShootingSection as ShootingSectionType } from '../../domain/schemas/project';
 import { ReferenceGallery } from './ReferenceGallery';
 import { ShotRow } from './ShotRow';
@@ -42,6 +42,7 @@ export function ShootingSection({
         <ShieldCheck aria-hidden="true" />
         <span>{section.tip}</span>
       </div>
+      {section.factChecks.length > 0 && <div className="fact-checks"><AlertTriangle aria-hidden="true" /><span>{section.factChecks.map((item) => item.text).join('；')}（待自行核实）</span></div>}
     </section>
   );
 }

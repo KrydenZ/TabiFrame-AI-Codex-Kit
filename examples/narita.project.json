@@ -10,7 +10,8 @@
   "orientation": "landscape",
   "videoResolution": "4K 24/30p",
   "targetVideoMinutes": 7.5,
-  "stylePresetId": "gentle-piano-vlog-v2",
+  "stylePresetId": "japan-solo-walk",
+  "sourceKind": "reference",
   "notes": [
     "本例拍摄计划源于历史成田篇，现场拍摄风格与后期默认剪映预设可以分别保存。",
     "拍摄无需拍满，不能把未拍镜头当已有素材。"

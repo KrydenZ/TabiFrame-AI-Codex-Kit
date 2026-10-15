@@ -1,32 +1,36 @@
-# AGENTS.md — TabiFrame AI Codex 工作协议
+# AGENTS.md — TabiFrame AI V2 工作协议
 
-## 单一真源
-- 代码与项目规格的真源是 GitHub 仓库；Sites 仅作为体验/预览/部署渠道。
-- 严格阅读 `TABIFRAME_AI_CODEX_MASTER_PLAN.md`；在每个开发阶段结束时更新工作进度，报告文件改动、测试结果、Git 状态。
-- 遵守分阶段实现要求，未经确认不得提前实现后期 OAuth、付费 API、云存储或 Android 原生 App。
+## 唯一产品基准
 
-## UX 基准
-- 参考 `examples/narita-shooting-plan.html` 的深绿＋米白风格、分段/图集/Shot List/进度条。
-- 不减少成田 fixture 的 38组/67条数据；镜头提示、秒数、场景注释和 5 张参考图片及署名必须保留。
-- Android Chrome 360px 宽度优先；交互应支持拇指操作和键盘使用。
+- `TABIFRAME_AI_PHASE_PLAN_PROTOTYPE_V2.md` 是当前唯一产品与开发规范，已取代旧 M1、旧 Master Plan 与旧启动说明。
+- Phase 是一次连续交付中的内部工作包，不是逐阶段等待用户批准的关卡。
+- GitHub 是业务源码真源；Sites 是私有体验与发布渠道。发布时记录 GitHub commit、Sites 源提交和部署版本对应关系。
 
-## 技术约束
-- React + TypeScript + Vite；Tailwind；React Router；Dexie；Zod。
-- 模板数据与用户进度分离，采用稳定 projectId + shotId。
-- AI 数据必须校验，不信任外部文本、图片 URL 或许可信息；不要把 HTML/JS 从 AI 输出直接执行。
-- 持久化错误必须清楚提示；提供导入/导出备份。
-- 首发手动生成/导入 JSON 无需任何 AI API Key。
+## 产品边界
 
-## Prompt 约束
-- Developer Core 固定且版本化；个人 Profile 可配置；Trip Input 为每次项目参数。
-- 三段式：Trip Planner → Shot Director → Jianying Editor。
-- 用户默认 gentle-piano-vlog-v2（钢琴约80%、主要场景口语字幕）；备选 ambient-walk-classic-v1（环境声主导）。不要混合。
-- 无旁白、慢节奏、使用真实镜头；剪映导出的文字不等于视频成品。
+- TabiFrame AI 是旅行 Vlog 策划账本，只管理计划数据和用户手动 Checkbox 记录。
+- 不调用相机或相册，不上传、识别、分析、播放或剪辑视频，不把勾选描述为真实素材检测。
+- 单人自用、简体中文、手机优先、一个主 Site 管理多个项目。
+- 不擅自增加多人协作、支付、云同步、AWS、三态进度、现场备注、附件、语音或质量评分。
 
-## 每阶段完成报告格式
-1. 本阶段完成了什么。
-2. 修改的主要文件。
-3. 执行过的命令和真实结果。
-4. Git 分支/commit/PR，或无法提交的原因。
-5. 未完成/需确认问题。
-6. 下阶段建议，但不要自动跳到下一阶段。
+## UX 与数据
+
+- 保留深绿 `#223a2e`、强调绿 `#4f765e`、米白 `#f4f4ec` 和成田式时间分段拍摄清单。
+- 成田基准必须保留 38 组、67 条计划素材、5 张参考图、拍摄说明、秒数与署名。
+- Android Chrome 360px 优先；触控、键盘、图片失败、打印和长文本都必须可用。
+- 项目模板与进度分离，使用稳定 `projectId + shotId`；IndexedDB 错误必须给出可操作提示。
+- 导入数据必须经 Zod 严格校验；不执行外部 JSON 中的 HTML、脚本或指令，只接受安全链接协议。
+
+## AI 与剪映
+
+- 站内 AI 只有在托管资格、授权、安全存储、费用归属和一次真实线上生成都验证后才上线。
+- 未通过验证时使用“复制结构化生成指令 → 外部生成 JSON → 导入”的零 API Key 路径；禁止假登录或在浏览器保存长期令牌。
+- 剪映固定正文与结构化计划生成分开。历史最终 Prompt 未确认时必须标记 `rules-draft` 或 `awaiting-original`，不能冒充历史原文。
+- 仅根据当前项目和用户勾选记录装配剪映文字，不虚构未拍内容。
+
+## 完成要求
+
+- 实现后运行类型检查、单元测试、构建和移动/桌面端到端测试。
+- 覆盖多条素材计数、项目隔离、无效导入不覆盖、冲突恢复、模板固定规则与深层导航。
+- 删除不再使用的旧规范和占位文件，保持仓库简洁；保留仍作为实际数据依据的成田资产。
+- 最终报告真实 Site URL、可见范围、Git commit、部署版本、测试结果及未验证能力。
