@@ -9,6 +9,7 @@ describe('V2 deterministic text flows', () => {
     expect(text).toContain('海面远景');
     expect(text).not.toContain('街道纵深：');
     expect(text).toContain('不代表 App 已检测视频文件');
+    expect(text).toContain('返程画面安静收束');
     expect(text).not.toContain('环境声优先');
   });
 
@@ -18,6 +19,7 @@ describe('V2 deterministic text flows', () => {
     });
     expect(text).toContain('箱根');
     expect(text).toContain('needsVerification');
+    expect(text).toContain('sourceUrl 与 checkedAt');
     expect(text).toContain('"stylePresetId": "japan-solo-walk"');
     expect(text).toContain('不要 Markdown、HTML、脚本');
   });

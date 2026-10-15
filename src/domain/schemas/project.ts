@@ -23,7 +23,15 @@ export const factCheckSchema = z
     sourceUrl: httpsUrlSchema.optional(),
     checkedAt: z.string().datetime().optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((fact, context) => {
+    if (fact.status === 'verified' && (!fact.sourceUrl || !fact.checkedAt)) {
+      context.addIssue({
+        code: 'custom',
+        message: '标记为已核实的事实必须同时提供 HTTPS 来源和核实时间',
+      });
+    }
+  });
 
 export const shotSchema = z
   .object({

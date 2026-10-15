@@ -1,5 +1,5 @@
 import { AlertTriangle, ArrowLeft } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { EditingPanel } from '../components/shooting/EditingPanel';
 import { ShootingBasics } from '../components/shooting/ShootingBasics';
 import { ShootingHero } from '../components/shooting/ShootingHero';
@@ -11,8 +11,15 @@ import { useShotProgress } from '../hooks/useShotProgress';
 
 export function ShootingPage() {
   const { projectId } = useParams();
+  const location = useLocation();
   const project = useProject(projectId);
   const progress = useShotProgress(projectId ?? 'missing-project');
+  const importMessage = typeof location.state === 'object'
+    && location.state !== null
+    && 'importMessage' in location.state
+    && typeof location.state.importMessage === 'string'
+    ? location.state.importMessage
+    : null;
 
   if (project === null) return <main className="state-shell"><p>正在读取本机项目…</p></main>;
   if (!project) {
@@ -25,6 +32,7 @@ export function ShootingPage() {
   return (
     <main className="page-shell">
       <nav className="shooting-nav"><Link className="back-link" to="/"><ArrowLeft aria-hidden="true" />所有项目</Link><span>{project.sourceKind === 'reference' ? '成田基准计划' : project.sourceKind === 'demo' ? '演示计划' : '我的导入计划'}</span></nav>
+      {importMessage && <p className="inline-message" role="status">{importMessage}</p>}
       <ShootingHero project={project} totalGroups={totals.totalGroups} totalClips={totals.totalClips} />
       <StickyProgress totals={totals} saveState={progress.saveState} errorMessage={progress.errorMessage} />
       <p className="count-explainer">“完成素材条数”只累计你手动勾选的计划组所包含的计划条数，不代表 App 检测、上传或核验了视频文件。</p>

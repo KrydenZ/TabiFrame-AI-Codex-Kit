@@ -1,4 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+const kamakuraDemo = JSON.parse(
+  readFileSync(new URL('../../examples/kamakura-demo.project.json', import.meta.url), 'utf8'),
+);
 
 test.beforeEach(async ({ page }) => {
   await page.route('https://commons.wikimedia.org/**', (route) => route.abort());
@@ -59,4 +64,43 @@ test('new project flow exposes honest external generation and JSON import', asyn
   await expect(page.getByRole('status')).toContainText('无法导入');
   await page.getByRole('link', { name: '返回项目列表' }).click();
   await expect(page.locator('.project-card')).toHaveCount(2);
+});
+
+test('valid plan import, editing summary, export and collision-safe restore form one complete flow', async ({ page }, testInfo) => {
+  const importedPlan = {
+    ...kamakuraDemo,
+    projectId: 'kamakura-e2e-import',
+    title: '一个人在日本散步 / 镰仓导入验收篇',
+    sourceKind: 'imported',
+  };
+
+  await page.getByRole('link', { name: '新建旅行计划' }).click();
+  await page.getByLabel('计划 JSON').fill(JSON.stringify(importedPlan));
+  await page.getByRole('button', { name: '校验并保存项目' }).click();
+
+  await expect(page.getByRole('status')).toContainText('计划校验通过并已保存');
+  await expect(page.locator('.hero-eyebrow')).toHaveText(importedPlan.title);
+  await page.getByRole('checkbox', { name: 'arrival-02 开始走路' }).check();
+  await page.getByRole('checkbox', { name: 'coast-01 海面远景' }).check();
+  await expect(page.getByTestId('progress-count')).toContainText('2 / 11组完成 · 4 / 21条');
+
+  const editingText = page.getByLabel('剪映规则草案与勾选摘要');
+  await expect(editingText).toContainText('开始走路');
+  await expect(editingText).toContainText('海面远景');
+  await page.getByRole('checkbox', { name: 'coast-01 海面远景' }).uncheck();
+  await expect(editingText).not.toContainText('海面远景：');
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: '导出项目备份' }).click();
+  const download = await downloadPromise;
+  const backupPath = testInfo.outputPath('tabiframe-project-backup.json');
+  await download.saveAs(backupPath);
+
+  await page.getByRole('link', { name: '所有项目' }).click();
+  await page.locator('input[type="file"]').setInputFiles(backupPath);
+
+  await expect(page.getByRole('status')).toContainText('项目 ID 已存在，已作为独立恢复副本导入');
+  await expect(page.locator('.hero-eyebrow')).toHaveText(`${importedPlan.title}（恢复副本）`);
+  await expect(page.getByRole('checkbox', { name: 'arrival-02 开始走路' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'coast-01 海面远景' })).not.toBeChecked();
 });

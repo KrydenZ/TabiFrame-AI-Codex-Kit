@@ -1,10 +1,12 @@
-# TabiFrame AI
+# TabiFrame AI 1.0
 
 TabiFrame AI 是一个手机优先的旅行 Vlog 策划账本。它帮助个人用户管理多期旅行项目、查看成田风格拍摄清单、手动勾选计划完成记录，并整理可复制给剪映的文字。
 
 > App 不调用相机或相册，不上传、识别、保存或剪辑视频。勾选只代表用户手动记录某个计划组完成，不代表系统核验了真实素材。
 
 当前唯一开发基准是 [`TABIFRAME_AI_PHASE_PLAN_PROTOTYPE_V2.md`](./TABIFRAME_AI_PHASE_PLAN_PROTOTYPE_V2.md)。旧 M1 计划已从仓库删除。
+
+Phase 0–6 已全部执行；其中 Phase 6 按规格完成了资格核对和安全降级，但因为远程网站授权资格与真实线上推理尚未具备，没有伪造为“站内 AI 已接通”。逐阶段记录见 [`docs/PHASE_COMPLETION.md`](./docs/PHASE_COMPLETION.md)。
 
 ## 当前能力
 
@@ -17,6 +19,7 @@ TabiFrame AI 是一个手机优先的旅行 Vlog 策划账本。它帮助个人�
 - 完整项目 JSON 备份与恢复；ID 冲突时自动创建独立恢复副本。
 - 固定剪辑规则草案和基于当前勾选记录的镜头摘要，可复制给剪映。
 - 打印/保存 PDF、远程图片失败降级、360px 手机布局。
+- 无效旧记录安全隔离并给出备份/恢复建议；带 `verified` 的导入事实必须同时提供可靠 HTTPS 来源和核实时间。
 
 ## 本地运行
 
@@ -73,4 +76,8 @@ pnpm test:e2e
 
 ## 站内 AI 状态
 
-当前未接通。官方文档面向开源/本地托管方案；远程托管 Site 的资格、令牌安全存储和真实推理尚未完成验证，因此不显示假登录按钮，也不自动使用开发者付费 API。详见 [`docs/AI_ACCESS_DECISION.md`](./docs/AI_ACCESS_DECISION.md)。
+当前未接通。OpenAI 官方网站接入仍是选定合作伙伴的有限试用；当前 Site 没有获批的 OAuth client，也没有完成真实线上模型调用。因此不显示假登录按钮，不使用 AWS 或浏览器令牌存储，也不自动使用开发者付费 API。详见 [`docs/AI_ACCESS_DECISION.md`](./docs/AI_ACCESS_DECISION.md)。
+
+## 尚未承诺的候选能力
+
+PWA 完全离线、外链图片离线、独立 HTML 导出和跨设备同步属于 V2 明确允许后置的候选项，目前未实现。现阶段请使用项目 JSON 备份与打印/PDF。

@@ -1,6 +1,7 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { ArrowLeft, Clipboard, FileJson, Upload } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { AiAccessNotice } from '../components/AiAccessNotice';
 import { formatValidationError, importGeneratedProject } from '../db/projects';
 import { buildGenerationPrompt, type TripInput } from '../domain/generation';
 import { copyText } from '../lib/browser';
@@ -26,8 +27,9 @@ export function NewProjectPage() {
   async function importJson(raw: string) {
     try {
       const result = await importGeneratedProject(JSON.parse(raw));
-      setMessage(result.collisionRemapped ? '项目 ID 已存在，已用新 ID 导入。' : '计划校验通过并已保存。');
-      navigate(`/projects/${result.project.projectId}/shooting`);
+      const importMessage = result.collisionRemapped ? '项目 ID 已存在，已用新 ID 导入。' : '计划校验通过并已保存。';
+      setMessage(importMessage);
+      navigate(`/projects/${result.project.projectId}/shooting`, { state: { importMessage } });
     } catch (error) {
       setMessage('无法导入：' + formatValidationError(error));
     }
@@ -51,6 +53,8 @@ export function NewProjectPage() {
         <h1>新建旅行计划</h1>
         <p>站内 AI 尚未接通。这里提供可靠的外部生成后导入流程，不需要 API Key，也不会产生站内模型费用。</p>
       </header>
+
+      <AiAccessNotice />
 
       <form className="trip-form" onSubmit={generatePrompt}>
         <label><span>目的地 *</span><input required value={trip.destination} onChange={(e) => setTrip({ ...trip, destination: e.target.value })} placeholder="例如：箱根汤本与芦之湖" /></label>

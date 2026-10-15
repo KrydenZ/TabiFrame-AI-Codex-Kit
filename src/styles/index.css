@@ -160,6 +160,51 @@ button:disabled {
   color: #3d5845;
 }
 
+.data-warning,
+.ai-access-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 1px solid #e2c79e;
+  border-radius: 13px;
+  background: #fbf3e6;
+  color: #73552d;
+}
+
+.data-warning {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.data-warning span,
+.ai-access-notice p {
+  margin: 2px 0 0;
+  font-size: 13px;
+}
+
+.ai-access-notice > svg {
+  flex: 0 0 auto;
+  width: 21px;
+  height: 21px;
+  margin-top: 2px;
+}
+
+.ai-access-notice a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ai-access-notice a svg {
+  width: 13px;
+  height: 13px;
+}
+
 .storage-banner > svg,
 .verification-card > svg {
   flex: 0 0 auto;

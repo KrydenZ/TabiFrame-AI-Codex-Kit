@@ -32,8 +32,19 @@ describe('Narita fixture', () => {
   });
 
   it('rejects duplicate shot ids', () => {
-    const invalid = structuredClone(naritaJson);
+    const invalid = structuredClone(project);
     invalid.sections[1].shots[0].id = '01';
+    const result = vlogProjectSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects a claimed verified fact without both evidence and checked time', () => {
+    const invalid = structuredClone(project);
+    invalid.sections[0].factChecks = [{
+      text: '营业时间已核实',
+      status: 'verified',
+    }];
+
     const result = vlogProjectSchema.safeParse(invalid);
     expect(result.success).toBe(false);
   });
