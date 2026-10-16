@@ -556,6 +556,12 @@ button:disabled {
   margin-top: 2px;
 }
 
+.template-status.confirmed {
+  border-color: #bfd2c2;
+  background: #edf4ec;
+  color: #355d43;
+}
+
 .editing-output {
   min-height: 330px;
 }

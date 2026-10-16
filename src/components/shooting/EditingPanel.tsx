@@ -38,7 +38,7 @@ export function EditingPanel({ project, completedShotIds, onResetProgress }: Edi
   async function copyDraft() {
     try {
       await copyText(draft);
-      setMessage('剪映规则草案与勾选摘要已复制。');
+      setMessage('系列剪映提示词与本期信息已复制。');
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '复制失败，请手动选择文本。');
     }
@@ -46,10 +46,10 @@ export function EditingPanel({ project, completedShotIds, onResetProgress }: Edi
 
   return (
     <section className="editing-note">
-      <div className="note-heading"><Clapperboard aria-hidden="true" /><div><span>剪映文字</span><h2>按勾选记录整理</h2></div></div>
+      <div className="note-heading"><Clapperboard aria-hidden="true" /><div><span>剪映文字</span><h2>系列模板与本期信息</h2></div></div>
       <table className="editing-timeline"><tbody>{project.editingTimeline.map(([time, title]) => <tr key={time}><th scope="row">{time}</th><td>{title}</td></tr>)}</tbody></table>
-      <div className="template-status"><Check aria-hidden="true" /><div><strong>{EDITING_TEMPLATE_LABEL}</strong><span>历史最终 Prompt 尚未由用户确认；这里使用固定规则草案，不交给模型自由改写。</span></div></div>
-      <textarea className="editing-output" readOnly value={draft} aria-label="剪映规则草案与勾选摘要" />
+      <div className="template-status confirmed"><Check aria-hidden="true" /><div><strong>{EDITING_TEMPLATE_LABEL}</strong><span>固定正文已由用户于 2026 年 10 月 17 日确认；App 只追加当前项目和手动勾选记录，不改写系列规则。</span></div></div>
+      <textarea className="editing-output" readOnly value={draft} aria-label="剪映系列提示词与本期信息" />
       <div className="action-buttons">
         <button className="action-button primary" type="button" onClick={() => void copyDraft()}><Clipboard aria-hidden="true" />复制剪映文字</button>
         <button className="action-button" type="button" onClick={() => window.print()}><Printer aria-hidden="true" />打印 / 保存 PDF</button>

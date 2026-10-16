@@ -142,7 +142,7 @@ test('valid plan import, editing summary, export and collision-safe restore form
   await page.getByRole('checkbox', { name: 'mm-17 山下公园与港口' }).check();
   await expect(page.getByTestId('progress-count')).toContainText('2 / 22组完成 · 4 / 36条');
 
-  const editingText = page.getByLabel('剪映规则草案与勾选摘要');
+  const editingText = page.getByLabel('剪映系列提示词与本期信息');
   await expect(editingText).toContainText('第一段脚步');
   await expect(editingText).toContainText('山下公园与港口');
   await page.getByRole('checkbox', { name: 'mm-17 山下公园与港口' }).uncheck();

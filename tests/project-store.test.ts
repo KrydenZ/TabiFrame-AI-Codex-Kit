@@ -12,6 +12,7 @@ beforeEach(async () => {
 describe('project backup restore', () => {
   it('creates an isolated restored project when the id already exists', async () => {
     const backup = createProjectBackup(naritaProject, ['10']);
+    expect(backup.templateRef).toBe('jianying-series-confirmed-v1');
     const result = await importProjectBackup(backup);
 
     expect(result.collisionRemapped).toBe(true);

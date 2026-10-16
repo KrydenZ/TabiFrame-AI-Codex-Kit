@@ -59,7 +59,7 @@ export function createProjectBackup(project: VlogProject, completedShotIds: read
     schemaVersion: 1,
     kind: 'tabiframe-project-backup',
     exportedAt: nowIso(),
-    templateRef: 'jianying-rules-draft-v2.1',
+    templateRef: 'jianying-series-confirmed-v1',
     project,
     completedShotIds: [...completedShotIds],
   });

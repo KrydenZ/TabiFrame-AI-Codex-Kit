@@ -110,7 +110,7 @@ export const projectBackupSchema = z
     schemaVersion: z.literal(1),
     kind: z.literal('tabiframe-project-backup'),
     exportedAt: z.string().datetime(),
-    templateRef: z.literal('jianying-rules-draft-v2.1'),
+    templateRef: z.enum(['jianying-rules-draft-v2.1', 'jianying-series-confirmed-v1']),
     project: vlogProjectSchema,
     completedShotIds: z.array(z.string().trim().min(1)),
   })
