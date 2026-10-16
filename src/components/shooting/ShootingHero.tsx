@@ -22,8 +22,8 @@ function formatShootDate(value: string): string {
 export function ShootingHero({ project, totalGroups, totalClips }: ShootingHeroProps) {
   return (
     <header className="shooting-hero">
-      <div className="hero-eyebrow">{project.title}</div>
-      <h1>就按照这份清单拍</h1>
+      <div className="hero-eyebrow">拍摄计划</div>
+      <h1>{project.title}</h1>
       <p className="hero-summary">{formatShootDate(project.shootDate)}｜{project.destination}{project.camera ? `｜${project.camera}` : ''}</p>
       <p className="hero-style">《一个人在日本散步》· 舒缓自然 · 无旁白 · 目标约 {project.targetVideoMinutes} 分钟</p>
 

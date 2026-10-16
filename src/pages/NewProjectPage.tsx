@@ -7,7 +7,7 @@ import { buildGenerationPrompt, type TripInput } from '../domain/generation';
 import { copyText } from '../lib/browser';
 
 const initialInput: TripInput = {
-  destination: '', dateOrSeason: '', shootingWindow: '约 4 小时', origin: '', endLocation: '', targetVideoMinutes: 7, equipment: '',
+  destination: '', dateOrSeason: '', shootingWindow: '约 4 小时', origin: '', endLocation: '', targetVideoMinutes: 12, equipment: '',
 };
 
 export function NewProjectPage() {

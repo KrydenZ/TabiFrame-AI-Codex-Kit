@@ -1,13 +1,13 @@
 import { buildEditingDraft, EDITING_TEMPLATE_LABEL } from '../src/domain/editing';
 import { buildGenerationPrompt } from '../src/domain/generation';
-import { kamakuraDemoProject } from '../src/fixtures/projects';
+import { yokohamaLineProject } from '../src/fixtures/projects';
 
 describe('V2 deterministic text flows', () => {
   it('builds the editing draft only from manually checked plan groups', () => {
-    const text = buildEditingDraft(kamakuraDemoProject, new Set(['coast-01']));
+    const text = buildEditingDraft(yokohamaLineProject, new Set(['yk-19']));
     expect(text).toContain(EDITING_TEMPLATE_LABEL);
-    expect(text).toContain('海面远景');
-    expect(text).not.toContain('街道纵深：');
+    expect(text).toContain('体育场外景');
+    expect(text).not.toContain('开始走路：');
     expect(text).toContain('不代表 App 已检测视频文件');
     expect(text).toContain('返程画面安静收束');
     expect(text).not.toContain('环境声优先');

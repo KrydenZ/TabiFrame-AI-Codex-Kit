@@ -336,6 +336,23 @@ button:disabled {
   text-decoration: none;
 }
 
+.project-card-footer .open-project-button {
+  justify-content: center;
+  min-width: 118px;
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: 11px;
+  background: #4f765e;
+  color: #fff;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.project-card-footer .open-project-button:hover {
+  background: #416a51;
+  text-decoration: none;
+}
+
 .project-card-footer svg {
   width: 14px;
   height: 14px;
@@ -1651,7 +1668,13 @@ a,
   }
 
   .project-card-footer {
-    align-items: flex-end;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .project-card-footer .open-project-button {
+    width: 100%;
+    min-height: 52px;
   }
 
   .full-field {

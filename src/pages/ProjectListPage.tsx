@@ -8,10 +8,10 @@ import { calculateProgress } from '../domain/progress';
 import { vlogProjectSchema } from '../domain/schemas/project';
 
 const sourceLabels = {
-  reference: '成田基准',
-  demo: '演示计划',
+  reference: '成田篇',
+  demo: '示例计划',
   imported: '导入计划',
-  generated: '站内生成',
+  generated: '旅行计划',
 } as const;
 
 export function ProjectListPage() {
@@ -76,9 +76,8 @@ export function ProjectListPage() {
     <main className="app-shell">
       <header className="app-header">
         <div>
-          <span className="brand-kicker">TABIFRAME AI · 个人版 1.1</span>
+          <span className="brand-kicker">TABIFRAME AI</span>
           <h1>旅行 Vlog 策划账本</h1>
-          <p>规划路线、现场勾选计划组，再整理成可复制给剪映的文字。App 不拍摄、上传或识别视频。</p>
         </div>
         <Link className="primary-link" to="/projects/new"><Plus aria-hidden="true" />新建旅行计划</Link>
       </header>
@@ -123,7 +122,7 @@ export function ProjectListPage() {
             </div>
             <div className="project-card-footer">
               <span>{totals.completedGroups}/{totals.totalGroups} 组 · {totals.completedClips}/{totals.totalClips} 条计划素材</span>
-              <Link to={`/projects/${project.projectId}/shooting`} aria-label={`打开${project.title}`}><FolderOpen aria-hidden="true" />打开<ArrowRight aria-hidden="true" /></Link>
+              <Link className="open-project-button" to={`/projects/${project.projectId}/shooting`} aria-label={`打开${project.title}`}><FolderOpen aria-hidden="true" />打开<ArrowRight aria-hidden="true" /></Link>
             </div>
             <div className="project-card-actions">
               <Link className="action-button" to={`/projects/${project.projectId}/edit`}><Pencil aria-hidden="true" />修改</Link>

@@ -4,15 +4,15 @@
 
 ## 已存在并继续使用
 
-- `examples/narita-shooting-plan.html`：由历史成田内容重建的独立 HTML 基准，不宣称是历史文件的逐字节原件。
-- `examples/narita.project.json`：当前成田结构化数据基准。
+- `examples/narita-shooting-plan.html`：由历史成田内容重建的独立 HTML 参考，不宣称是历史文件的逐字节原件。
+- `examples/narita.project.json`：当前成田篇结构化数据。
 - 成田数据实际包含 5 个时段、38 组镜头、67 条计划素材与 5 张 Wikimedia Commons 参考图。
 - 第 10 组“★ 仲町下坡”包含 3 条计划素材；单独勾选应显示 1/38 组、3/67 条。
 - 5 张图片继续保留 caption、远程 URL、来源 URL、作者和许可证文字；图片没有复制进仓库。
 
 ## V2 新增
 
-- `examples/kamakura-demo.project.json`：用于验证不同目的地、多项目隔离和通用渲染的演示计划。其事实核查项均明确标记为待确认，不作为实时路线建议。
+- `examples/yokohama-line-2026-10-17.project.json`：面向 2026-10-17 的横滨线沿线计划，用于验证不同目的地、多项目隔离和通用渲染；天气、运行和现场限制明确留作出发前核对。
 - `TABIFRAME_AI_PHASE_PLAN_PROTOTYPE_V2.md`：唯一最终开发基准。
 
 ## 已清理或降级

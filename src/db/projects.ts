@@ -4,6 +4,9 @@ import { projectBackupSchema, vlogProjectSchema, type ProjectBackup, type VlogPr
 import { createRemoteProject, deleteRemoteProject, fetchRemoteSnapshot, putRemoteProgress, putRemoteProject } from './remote';
 
 const REMOTE_MIGRATION_KEY = 'tabiframe-remote-migration-v1';
+const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v1';
+const YOKOHAMA_PROJECT_ID = 'yokohama-line-2026-10-17';
+const RETIRED_PROJECT_IDS = new Set(['kamakura-demo']);
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -112,11 +115,30 @@ export async function deleteProject(projectId: string): Promise<void> {
 export async function syncRemoteProjects(): Promise<{ migratedCount: number; unreadableCount: number }> {
   const localProjects = (await db.projects.toArray()).flatMap((row) => {
     const parsed = vlogProjectSchema.safeParse(row);
-    return parsed.success ? [parsed.data] : [];
+    return parsed.success && !RETIRED_PROJECT_IDS.has(parsed.data.projectId) ? [parsed.data] : [];
   });
-  const localProgress = await db.shotProgress.toArray();
+  const localProgress = (await db.shotProgress.toArray())
+    .filter((record) => !RETIRED_PROJECT_IDS.has(record.projectId));
   let remote = await fetchRemoteSnapshot();
   let migratedCount = 0;
+
+  const retiredRemoteIds = remote.projects
+    .map((project) => project.projectId)
+    .filter((projectId) => RETIRED_PROJECT_IDS.has(projectId));
+  for (const projectId of retiredRemoteIds) await deleteRemoteProject(projectId);
+  if (retiredRemoteIds.length) remote = await fetchRemoteSnapshot();
+
+  const contentRefreshPending = window.localStorage.getItem(CONTENT_REFRESH_KEY) !== 'done';
+  if (contentRefreshPending) {
+    const yokohamaProject = seedProjects.find((project) => project.projectId === YOKOHAMA_PROJECT_ID);
+    if (yokohamaProject && !remote.projects.some((project) => project.projectId === YOKOHAMA_PROJECT_ID)) {
+      await putRemoteProject(withTimestamps(yokohamaProject), []);
+      migratedCount += 1;
+      remote = await fetchRemoteSnapshot();
+    }
+    window.localStorage.setItem(CONTENT_REFRESH_KEY, 'done');
+  }
+
   const migrationPending = window.localStorage.getItem(REMOTE_MIGRATION_KEY) !== 'done';
 
   if (migrationPending) {
