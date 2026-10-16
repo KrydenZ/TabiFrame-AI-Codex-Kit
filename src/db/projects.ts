@@ -4,7 +4,7 @@ import { projectBackupSchema, vlogProjectSchema, type ProjectBackup, type VlogPr
 import { createRemoteProject, deleteRemoteProject, fetchRemoteSnapshot, putRemoteProgress, putRemoteProject } from './remote';
 
 const REMOTE_MIGRATION_KEY = 'tabiframe-remote-migration-v1';
-const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v2';
+const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v3';
 const FEATURED_PROJECT_ID = 'minatomirai-line-2026-10-17';
 const RETIRED_PROJECT_IDS = new Set(['kamakura-demo', 'yokohama-line-2026-10-17']);
 
@@ -148,7 +148,18 @@ export async function syncRemoteProjects(): Promise<{ migratedCount: number; unr
     }
 
     const featuredProject = seedProjects.find((project) => project.projectId === FEATURED_PROJECT_ID);
-    if (featuredProject && !remote.projects.some((project) => project.projectId === FEATURED_PROJECT_ID)) {
+    const remoteFeatured = remote.projects.find((project) => project.projectId === FEATURED_PROJECT_ID);
+    if (featuredProject && remoteFeatured && remoteFeatured.targetVideoMinutes !== featuredProject.targetVideoMinutes) {
+      const completedShotIds = remote.progress
+        .filter((record) => record.projectId === FEATURED_PROJECT_ID)
+        .map((record) => record.shotId);
+      await putRemoteProject({
+        ...featuredProject,
+        createdAt: remoteFeatured.createdAt,
+        updatedAt: remoteFeatured.updatedAt,
+      }, completedShotIds);
+      remote = await fetchRemoteSnapshot();
+    } else if (featuredProject && !remoteFeatured) {
       await putRemoteProject(withTimestamps(featuredProject), []);
       migratedCount += 1;
       remote = await fetchRemoteSnapshot();

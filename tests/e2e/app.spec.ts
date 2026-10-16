@@ -107,7 +107,7 @@ test('multi-project shooting progress persists without mobile overflow', async (
 test('new project flow exposes honest external generation and JSON import', async ({ page }, testInfo) => {
   await page.getByRole('link', { name: '新建旅行计划' }).click();
   await expect(page.getByText('Schema JSON 怎么生成？')).toBeVisible();
-  await expect(page.getByLabel('目标成片分钟 *')).toHaveValue('12');
+  await expect(page.getByLabel('目标成片分钟 *')).toHaveValue('8');
   await expect(page.getByLabel('不要出现什么')).toHaveValue('美食、购物、陌生人特写、需要预约的室内场所');
   await page.getByLabel('目的地 *').fill('箱根');
   await page.getByLabel('日期或季节 *').fill('深秋');

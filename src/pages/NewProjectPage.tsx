@@ -7,7 +7,7 @@ import { buildGenerationPrompt, type TripInput } from '../domain/generation';
 import { copyText } from '../lib/browser';
 
 const initialInput: TripInput = {
-  destination: '', dateOrSeason: '', shootingWindow: '约 4 小时', origin: '', endLocation: '', targetVideoMinutes: 12, equipment: '',
+  destination: '', dateOrSeason: '', shootingWindow: '约 4 小时', origin: '', endLocation: '', targetVideoMinutes: 8, equipment: '',
   contentFocus: '城市散步、建筑、沿途变化、环境声',
   avoidContent: '美食、购物、陌生人特写、需要预约的室内场所',
 };
