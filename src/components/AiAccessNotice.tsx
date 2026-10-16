@@ -1,18 +1,14 @@
-import { ExternalLink, ShieldAlert } from 'lucide-react';
+import { Braces } from 'lucide-react';
 
 export function AiAccessNotice() {
   return (
     <section className="ai-access-notice" aria-labelledby="ai-access-title">
-      <ShieldAlert aria-hidden="true" />
+      <Braces aria-hidden="true" />
       <div>
-        <strong id="ai-access-title">站内 AI：资格未验证，因此保持关闭</strong>
+        <strong id="ai-access-title">Schema JSON 怎么生成？</strong>
         <p>
-          OpenAI 当前把远程网站的 Sign in with ChatGPT 列为有限试用，需要获批的 OAuth 客户端和安全后端。
-          本 Site 尚无这些资格，也没有完成一次真实线上生成，所以不会显示假登录或偷偷改用开发者付费 API。
+          填表后复制 App 生成的提示词，发给你正在使用的 ChatGPT 或 Codex；把它返回的纯 JSON 粘贴回来即可。App 不要求 API Key，也不用你手写字段。
         </p>
-        <a href="https://developers.openai.com/siwc/website" target="_blank" rel="noopener noreferrer">
-          查看官方适用范围<ExternalLink aria-hidden="true" />
-        </a>
       </div>
     </section>
   );

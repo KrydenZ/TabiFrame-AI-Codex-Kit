@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "promptVersion": "prototype-v2.2",
+  "projectId": "minatomirai-line-2026-10-17",
+  "title": "明天沿着港未来线溜达",
+  "destination": "横滨 → 新高岛 → 港未来 → 马车道 → 日本大通 → 元町·中华街",
+  "shootDate": "2026-10-17",
+  "season": "秋天",
+  "shootWindow": "09:30–15:30",
+  "origin": "横滨站东口",
+  "endLocation": "元町·中华街站或山下公园",
+  "camera": "手机或随身相机",
+  "orientation": "landscape",
+  "videoResolution": "4K 24/30p",
+  "targetVideoMinutes": 12,
+  "stylePresetId": "japan-solo-walk",
+  "sourceKind": "generated",
+  "notes": [
+    "沿港未来线地面方向散步，不要求每站进站，也不需要从头到尾贴着线路走。",
+    "这次重点是城市尺度变化、海边、建筑和脚步；不安排美食、购物或陌生人特写。",
+    "站内和车内不是主场景；如需进入，只做不妨碍通行的手持记录，并遵守现场标识。"
+  ],
+  "editingTimeline": [
+    ["00:00–01:30", "横滨站东口与新高岛出发"],
+    ["01:30–04:30", "港未来高楼、海边和开阔空间"],
+    ["04:30–07:00", "马车道的砖墙与历史建筑"],
+    ["07:00–10:00", "日本大通与山下公园"],
+    ["10:00–12:00", "元町·中华街方向与海边收尾"]
+  ],
+  "sections": [
+    {
+      "id": "yokohama-shintakashima",
+      "time": "09:30–10:20",
+      "title": "横滨站东口 → 新高岛",
+      "subtitle": "从车站密度走向宽阔街区 · 本段 6 条计划素材",
+      "tip": "横滨站周边人流大，出站后再开始拍；不在扶梯、闸机口或狭窄通道停留。",
+      "shots": [
+        {"id":"mm-01","title":"横滨站东口出发","description":"在室外公共区域固定拍出口与人流方向，画面稳定后再录","clipCount":1,"recordSeconds":12,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-02","title":"第一段脚步","description":"拍自己的脚步和前方道路各一条，慢走，不回头倒退","clipCount":2,"recordSeconds":10,"priority":"must","completed":false,"shotSize":"medium","movement":"walk"},
+        {"id":"mm-03","title":"新高岛的街区尺度","description":"拍宽街、楼体间距或高架结构，两条都使用固定机位","clipCount":2,"recordSeconds":15,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-04","title":"新高岛站名","description":"从不挡路的位置拍站名或入口，作为沿线位置标记","clipCount":1,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"medium","movement":"static"}
+      ],
+      "referenceImages": [],
+      "factChecks": [
+        {"text":"港未来线依次设横滨、新高岛、港未来、马车道、日本大通、元町·中华街 6 站，全长约 4.1 km。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/info/news/uploads/press%20release_20231006.pdf","checkedAt":"2026-10-16T12:40:00.000Z"}
+      ]
+    },
+    {
+      "id": "minatomirai-waterfront",
+      "time": "10:20–11:40",
+      "title": "港未来：高楼与海边",
+      "subtitle": "让画面从城市硬线条慢慢打开 · 本段 9 条计划素材",
+      "tip": "广场和海边优先固定拍摄；遇到施工、活动围挡或大风就换公共步道，不为构图靠近水边边缘。",
+      "shots": [
+        {"id":"mm-05","title":"港未来全景","description":"找开阔公共区域拍一条楼群全景，再换前景拍一条","clipCount":2,"recordSeconds":15,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-06","title":"楼体向上看","description":"选择一个建筑立面，固定一条、缓慢上仰一条","clipCount":2,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"wide","movement":"tilt"},
+        {"id":"mm-07","title":"海边开阔感","description":"拍水面与城市同框，再拍一条只留水面、风和远处声音","clipCount":2,"recordSeconds":18,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-08","title":"公共空间细节","description":"从栏杆、路面线条、倒影或树影中选一个细节","clipCount":1,"recordSeconds":10,"priority":"normal","completed":false,"shotSize":"detail","movement":"static"},
+        {"id":"mm-09","title":"沿海继续走","description":"一条向前慢走，一条让自己或路人从远处自然经过；避开人脸特写","clipCount":2,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"wide","movement":"walk"}
+      ],
+      "referenceImages": [],
+      "factChecks": [
+        {"text":"港未来站位于港未来 21 中央地区，周边集中分布文化、会展和商业设施。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/station/minatomirai/index.html","checkedAt":"2026-10-16T12:40:00.000Z"}
+      ]
+    },
+    {
+      "id": "bashamichi",
+      "time": "11:40–12:40",
+      "title": "马车道：从新城走进旧建筑",
+      "subtitle": "砖墙、街灯、立面与安静转场 · 本段 7 条计划素材",
+      "tip": "不进入私有建筑拍摄；门口有人流时先走过，换到宽阔人行道再固定取景。",
+      "shots": [
+        {"id":"mm-10","title":"马车道方向标记","description":"拍站名、路名或清楚的公共导向牌，交代位置变化","clipCount":2,"recordSeconds":10,"priority":"normal","completed":false,"shotSize":"medium","movement":"static"},
+        {"id":"mm-11","title":"砖墙与历史立面","description":"建筑整体一条、砖石或窗框细节一条，保持垂直线稳定","clipCount":2,"recordSeconds":15,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-12","title":"街灯与道路纵深","description":"用街灯做前景拍道路延伸，再换一处安全位置补一条","clipCount":2,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-13","title":"马车道环境声","description":"固定收 25 秒脚步、车声和城市底噪，拍摄时不说话","clipCount":1,"recordSeconds":25,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"}
+      ],
+      "referenceImages": [],
+      "factChecks": []
+    },
+    {
+      "id": "nihonodori-yamashita",
+      "time": "12:40–14:10",
+      "title": "日本大通 → 山下公园",
+      "subtitle": "历史街景、林荫道和港口视线 · 本段 9 条计划素材",
+      "tip": "树荫明暗反差大，先锁定曝光再录；公园内不长时间对着儿童、表演者或活动参与者拍摄。",
+      "shots": [
+        {"id":"mm-14","title":"日本大通林荫道","description":"固定拍道路纵深和树列，再拍一条慢慢向前的步行镜头","clipCount":2,"recordSeconds":15,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-15","title":"历史建筑轮廓","description":"挑一栋现场可从公共区域看到的建筑，拍整体和顶部细节","clipCount":2,"recordSeconds":15,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-16","title":"从街道走向海边","description":"记录视野逐渐变开的过程：一个固定转场、一个向前慢走","clipCount":2,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"wide","movement":"walk"},
+        {"id":"mm-17","title":"山下公园与港口","description":"水面远景一条、船或港口设施一条；没有船也不等待追拍","clipCount":2,"recordSeconds":18,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-18","title":"海风环境声","description":"找安全位置固定收 30 秒风、水和远处港口声音","clipCount":1,"recordSeconds":30,"priority":"must","completed":false,"shotSize":"wide","movement":"static"}
+      ],
+      "referenceImages": [],
+      "factChecks": [
+        {"text":"日本大通站周边分布多座横滨开港相关历史建筑。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/station/nihonodori/","checkedAt":"2026-10-16T12:40:00.000Z"}
+      ]
+    },
+    {
+      "id": "motomachi-finish",
+      "time": "14:10–15:30",
+      "title": "元町·中华街方向：沿街与海边收尾",
+      "subtitle": "街口、港边余光与返程 · 本段 5 条计划素材",
+      "tip": "中华街人多时只在外围记录街道氛围，不进入店内、不追拍人群；累了可直接在山下公园结束。",
+      "shots": [
+        {"id":"mm-19","title":"元町或中华街入口","description":"二选一拍公共街口与路牌，补一条向街道内部延伸的远景","clipCount":2,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-20","title":"最后一段脚步","description":"在宽阔人行道拍一条慢走镜头，让节奏从热闹降下来","clipCount":1,"recordSeconds":15,"priority":"normal","completed":false,"shotSize":"wide","movement":"walk"},
+        {"id":"mm-21","title":"回看港口方向","description":"在公共区域固定拍最后一条海边或天际线，不必寻找新景点","clipCount":1,"recordSeconds":18,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
+        {"id":"mm-22","title":"返程收尾","description":"拍站外入口、离开的脚步或回程车窗三选一，留足 15 秒","clipCount":1,"recordSeconds":15,"priority":"must","completed":false,"shotSize":"wide","movement":"static"}
+      ],
+      "referenceImages": [],
+      "factChecks": [
+        {"text":"元町·中华街站周边连接元町、中华街、山下公园及港之见丘等区域。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/station/motomachi/","checkedAt":"2026-10-16T12:40:00.000Z"}
+      ]
+    }
+  ],
+  "needsVerification": [
+    "出发前确认 2026 年 10 月 17 日横滨天气和港未来线运行信息。",
+    "确认元町·中华街站第 4 出入口临时关闭期间可使用的其他出入口。",
+    "确认沿线当天是否有活动、施工或临时通行限制；以现场公共步道为准。",
+    "站内、车内、商业设施及活动区域的拍摄以现场标识和工作人员要求为准。"
+  ]
+}

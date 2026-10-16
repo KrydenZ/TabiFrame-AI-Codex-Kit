@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
-const yokohamaLinePlan = JSON.parse(
-  readFileSync(new URL('../../examples/yokohama-line-2026-10-17.project.json', import.meta.url), 'utf8'),
+const minatomiraiLinePlan = JSON.parse(
+  readFileSync(new URL('../../examples/minatomirai-line-2026-10-17.project.json', import.meta.url), 'utf8'),
 );
 const naritaReference = JSON.parse(
   readFileSync(new URL('../../examples/narita.project.json', import.meta.url), 'utf8'),
@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
     const response = await fetch('/api/projects');
     const snapshot = await response.json() as { projects: Array<{ projectId: string }> };
     for (const project of snapshot.projects) {
-      if (!['narita-2026-10-10', 'yokohama-line-2026-10-17'].includes(project.projectId)) {
+      if (!['narita-2026-10-10', 'minatomirai-line-2026-10-17'].includes(project.projectId)) {
         await fetch(`/api/projects/${encodeURIComponent(project.projectId)}`, {
           method: 'DELETE', headers: { 'content-type': 'application/json' }, body: '{}',
         });
@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
         method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ project, completedShotIds: [] }),
       });
     }
-  }, [naritaReference, yokohamaLinePlan]);
+  }, [naritaReference, minatomiraiLinePlan]);
   await page.evaluate(() => localStorage.setItem('tabiframe-remote-migration-v1', 'done'));
   await page.reload();
 });
@@ -57,7 +57,7 @@ test('project search, edit and delete operate on remote projects', async ({ page
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ project, completedShotIds: [] }),
     });
-  }, { ...yokohamaLinePlan, projectId: 'crud-delete-e2e', title: '删除验收临时项目', sourceKind: 'imported' });
+  }, { ...minatomiraiLinePlan, projectId: 'crud-delete-e2e', title: '删除验收临时项目', sourceKind: 'imported' });
   await page.reload();
   const temporaryCard = page.locator('.project-card').filter({ hasText: '删除验收临时项目' });
   await expect(temporaryCard).toBeVisible();
@@ -88,7 +88,7 @@ test('multi-project shooting progress persists without mobile overflow', async (
   await expect(page.getByRole('checkbox', { name: '10 ★ 仲町下坡' })).toBeChecked();
 
   await page.getByRole('link', { name: '所有项目' }).click();
-  await page.getByRole('link', { name: '打开明天沿着横滨线溜达' }).click();
+  await page.getByRole('link', { name: '打开明天沿着港未来线溜达' }).click();
   await expect(page.getByTestId('progress-count')).toContainText('0 / 22组完成 · 0 / 36条');
 
   await page.getByRole('link', { name: '所有项目' }).click();
@@ -104,14 +104,19 @@ test('multi-project shooting progress persists without mobile overflow', async (
   }
 });
 
-test('new project flow exposes honest external generation and JSON import', async ({ page }) => {
+test('new project flow exposes honest external generation and JSON import', async ({ page }, testInfo) => {
   await page.getByRole('link', { name: '新建旅行计划' }).click();
-  await expect(page.getByText('站内 AI 尚未接通。')).toBeVisible();
+  await expect(page.getByText('Schema JSON 怎么生成？')).toBeVisible();
   await expect(page.getByLabel('目标成片分钟 *')).toHaveValue('12');
+  await expect(page.getByLabel('不要出现什么')).toHaveValue('美食、购物、陌生人特写、需要预约的室内场所');
   await page.getByLabel('目的地 *').fill('箱根');
   await page.getByLabel('日期或季节 *').fill('深秋');
-  await page.getByRole('button', { name: '生成结构化计划指令' }).click();
+  await page.getByRole('button', { name: '生成并显示完整提示词' }).click();
   await expect(page.getByLabel('结构化计划生成指令')).toContainText('箱根');
+  await expect(page.getByLabel('结构化计划生成指令')).toContainText('不要自动加入美食');
+  if (testInfo.project.name === 'mobile-chrome-360') {
+    await page.screenshot({ path: testInfo.outputPath('v2-mobile-schema-flow.png'), fullPage: true });
+  }
   await page.getByLabel('计划 JSON').fill('{"invalid":true}');
   await page.getByRole('button', { name: '校验并保存项目' }).click();
   await expect(page.getByRole('status')).toContainText('无法导入');
@@ -121,9 +126,9 @@ test('new project flow exposes honest external generation and JSON import', asyn
 
 test('valid plan import, editing summary, export and collision-safe restore form one complete flow', async ({ page }, testInfo) => {
   const importedPlan = {
-    ...yokohamaLinePlan,
-    projectId: 'yokohama-e2e-import',
-    title: '横滨线导入验收篇',
+    ...minatomiraiLinePlan,
+    projectId: 'minatomirai-e2e-import',
+    title: '港未来线导入验收篇',
     sourceKind: 'imported',
   };
 
@@ -133,15 +138,15 @@ test('valid plan import, editing summary, export and collision-safe restore form
 
   await expect(page.getByRole('status')).toContainText('计划校验通过并已保存');
   await expect(page.getByRole('heading', { name: importedPlan.title })).toBeVisible();
-  await page.getByRole('checkbox', { name: 'yk-03 开始走路' }).check();
-  await page.getByRole('checkbox', { name: 'yk-19 体育场外景' }).check();
+  await page.getByRole('checkbox', { name: 'mm-02 第一段脚步' }).check();
+  await page.getByRole('checkbox', { name: 'mm-17 山下公园与港口' }).check();
   await expect(page.getByTestId('progress-count')).toContainText('2 / 22组完成 · 4 / 36条');
 
   const editingText = page.getByLabel('剪映规则草案与勾选摘要');
-  await expect(editingText).toContainText('开始走路');
-  await expect(editingText).toContainText('体育场外景');
-  await page.getByRole('checkbox', { name: 'yk-19 体育场外景' }).uncheck();
-  await expect(editingText).not.toContainText('体育场外景：');
+  await expect(editingText).toContainText('第一段脚步');
+  await expect(editingText).toContainText('山下公园与港口');
+  await page.getByRole('checkbox', { name: 'mm-17 山下公园与港口' }).uncheck();
+  await expect(editingText).not.toContainText('山下公园与港口：');
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: '导出项目备份' }).click();
@@ -154,6 +159,6 @@ test('valid plan import, editing summary, export and collision-safe restore form
 
   await expect(page.getByRole('status')).toContainText('项目 ID 已存在，已作为独立恢复副本导入');
   await expect(page.getByRole('heading', { name: `${importedPlan.title}（恢复副本）` })).toBeVisible();
-  await expect(page.getByRole('checkbox', { name: 'yk-03 开始走路' })).toBeChecked();
-  await expect(page.getByRole('checkbox', { name: 'yk-19 体育场外景' })).not.toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'mm-02 第一段脚步' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'mm-17 山下公园与港口' })).not.toBeChecked();
 });

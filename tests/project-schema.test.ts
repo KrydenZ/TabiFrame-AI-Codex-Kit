@@ -12,6 +12,8 @@ describe('Narita fixture', () => {
     expect(shots.reduce((sum, shot) => sum + shot.clipCount, 0)).toBe(67);
     expect(project.sections.flatMap((section) => section.referenceImages)).toHaveLength(5);
     expect(new Set(shots.map((shot) => shot.id)).size).toBe(38);
+    expect(shots.map((shot) => shot.title)).not.toContain('食物');
+    expect(shots.map((shot) => shot.title)).not.toContain('茶杯 / 休息');
   });
 
   it('reports shot 10 as one group and three clips', () => {

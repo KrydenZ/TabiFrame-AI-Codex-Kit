@@ -12,7 +12,7 @@
 
 ## V2 新增
 
-- `examples/yokohama-line-2026-10-17.project.json`：面向 2026-10-17 的横滨线沿线计划，用于验证不同目的地、多项目隔离和通用渲染；天气、运行和现场限制明确留作出发前核对。
+- `examples/minatomirai-line-2026-10-17.project.json`：面向 2026-10-17 的港未来线沿线计划，用于验证不同目的地、多项目隔离和通用渲染；天气、运行和现场限制明确留作出发前核对。
 - `TABIFRAME_AI_PHASE_PLAN_PROTOTYPE_V2.md`：唯一最终开发基准。
 
 ## 已清理或降级

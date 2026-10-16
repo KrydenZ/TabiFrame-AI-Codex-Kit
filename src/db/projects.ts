@@ -4,9 +4,9 @@ import { projectBackupSchema, vlogProjectSchema, type ProjectBackup, type VlogPr
 import { createRemoteProject, deleteRemoteProject, fetchRemoteSnapshot, putRemoteProgress, putRemoteProject } from './remote';
 
 const REMOTE_MIGRATION_KEY = 'tabiframe-remote-migration-v1';
-const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v1';
-const YOKOHAMA_PROJECT_ID = 'yokohama-line-2026-10-17';
-const RETIRED_PROJECT_IDS = new Set(['kamakura-demo']);
+const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v2';
+const FEATURED_PROJECT_ID = 'minatomirai-line-2026-10-17';
+const RETIRED_PROJECT_IDS = new Set(['kamakura-demo', 'yokohama-line-2026-10-17']);
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -130,9 +130,26 @@ export async function syncRemoteProjects(): Promise<{ migratedCount: number; unr
 
   const contentRefreshPending = window.localStorage.getItem(CONTENT_REFRESH_KEY) !== 'done';
   if (contentRefreshPending) {
-    const yokohamaProject = seedProjects.find((project) => project.projectId === YOKOHAMA_PROJECT_ID);
-    if (yokohamaProject && !remote.projects.some((project) => project.projectId === YOKOHAMA_PROJECT_ID)) {
-      await putRemoteProject(withTimestamps(yokohamaProject), []);
+    const naritaSeed = seedProjects.find((project) => project.projectId === 'narita-2026-10-10');
+    const remoteNarita = remote.projects.find((project) => project.projectId === 'narita-2026-10-10');
+    const naritaNeedsRefresh = remoteNarita?.sections
+      .flatMap((section) => section.shots)
+      .some((shot) => shot.title === '食物' || shot.title === '茶杯 / 休息');
+    if (naritaSeed && remoteNarita && naritaNeedsRefresh) {
+      const completedShotIds = remote.progress
+        .filter((record) => record.projectId === remoteNarita.projectId)
+        .map((record) => record.shotId);
+      await putRemoteProject({
+        ...naritaSeed,
+        createdAt: remoteNarita.createdAt,
+        updatedAt: remoteNarita.updatedAt,
+      }, completedShotIds);
+      remote = await fetchRemoteSnapshot();
+    }
+
+    const featuredProject = seedProjects.find((project) => project.projectId === FEATURED_PROJECT_ID);
+    if (featuredProject && !remote.projects.some((project) => project.projectId === FEATURED_PROJECT_ID)) {
+      await putRemoteProject(withTimestamps(featuredProject), []);
       migratedCount += 1;
       remote = await fetchRemoteSnapshot();
     }

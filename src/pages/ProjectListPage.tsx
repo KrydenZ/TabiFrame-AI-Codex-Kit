@@ -8,7 +8,7 @@ import { calculateProgress } from '../domain/progress';
 import { vlogProjectSchema } from '../domain/schemas/project';
 
 const sourceLabels = {
-  reference: '成田篇',
+  reference: '历史参考',
   demo: '示例计划',
   imported: '导入计划',
   generated: '旅行计划',
@@ -32,7 +32,11 @@ export function ProjectListPage() {
         const ids = new Set(progress.filter((item) => item.projectId === project.projectId).map((item) => item.shotId));
         return { project, totals: calculateProgress(project, ids) };
       })
-      .sort((a, b) => (b.project.updatedAt ?? '').localeCompare(a.project.updatedAt ?? ''));
+      .sort((a, b) => {
+        if (a.project.sourceKind === 'reference' && b.project.sourceKind !== 'reference') return 1;
+        if (b.project.sourceKind === 'reference' && a.project.sourceKind !== 'reference') return -1;
+        return (b.project.updatedAt ?? '').localeCompare(a.project.updatedAt ?? '');
+      });
     return { projects, unreadableCount: allRows.length - rows.length };
   }, []);
   const projects = projectState?.projects ?? [];
