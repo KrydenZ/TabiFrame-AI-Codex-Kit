@@ -4,19 +4,68 @@ import { readFileSync } from 'node:fs';
 const kamakuraDemo = JSON.parse(
   readFileSync(new URL('../../examples/kamakura-demo.project.json', import.meta.url), 'utf8'),
 );
+const naritaReference = JSON.parse(
+  readFileSync(new URL('../../examples/narita.project.json', import.meta.url), 'utf8'),
+);
 
 test.beforeEach(async ({ page }) => {
   await page.route('https://commons.wikimedia.org/**', (route) => route.abort());
-  await page.goto('/');
-  await page.evaluate(async () => {
-    await new Promise<void>((resolve, reject) => {
-      const request = indexedDB.deleteDatabase('tabiframe-ai');
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-      request.onblocked = () => resolve();
-    });
-  });
+  await page.goto('/signin-with-chatgpt?return_to=/');
+  await expect(page.getByRole('heading', { name: '旅行 Vlog 策划账本' })).toBeVisible();
+  await page.evaluate(async (canonicalProjects) => {
+    const response = await fetch('/api/projects');
+    const snapshot = await response.json() as { projects: Array<{ projectId: string }> };
+    for (const project of snapshot.projects) {
+      if (!['narita-2026-10-10', 'kamakura-demo'].includes(project.projectId)) {
+        await fetch(`/api/projects/${encodeURIComponent(project.projectId)}`, {
+          method: 'DELETE', headers: { 'content-type': 'application/json' }, body: '{}',
+        });
+      }
+    }
+    for (const project of canonicalProjects) {
+      await fetch(`/api/projects/${encodeURIComponent(project.projectId)}`, {
+        method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ project, completedShotIds: [] }),
+      });
+    }
+  }, [naritaReference, kamakuraDemo]);
+  await page.evaluate(() => localStorage.setItem('tabiframe-remote-migration-v1', 'done'));
   await page.reload();
+});
+
+test('project search, edit and delete operate on remote projects', async ({ page }) => {
+  await page.getByPlaceholder('按项目名、目的地、日期查询').fill('成田山');
+  await expect(page.locator('.project-card')).toHaveCount(1);
+  await page.getByRole('link', { name: '修改' }).click();
+  await page.getByLabel('项目名称 *').fill('成田远程验收项目');
+  await page.getByRole('button', { name: '保存项目资料' }).click();
+  await expect(page.getByRole('status')).toContainText('项目资料已保存到远程账户');
+  await page.getByRole('link', { name: '所有项目' }).click();
+  await expect(page.getByRole('heading', { name: '旅行项目' })).toBeVisible();
+  await expect(page.locator('.project-card h3', { hasText: '成田远程验收项目' })).toBeVisible();
+  await page.reload();
+  await expect(page.locator('.project-card h3', { hasText: '成田远程验收项目' })).toBeVisible();
+
+  await page.getByRole('link', { name: '修改' }).first().click();
+  await page.getByLabel('项目名称 *').fill('一个人在日本散步 / 成田篇');
+  await page.getByRole('button', { name: '保存项目资料' }).click();
+  await expect(page.getByRole('status')).toContainText('项目资料已保存到远程账户');
+  await page.getByRole('link', { name: '所有项目' }).click();
+
+  await page.evaluate(async (project) => {
+    await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ project, completedShotIds: [] }),
+    });
+  }, { ...kamakuraDemo, projectId: 'crud-delete-e2e', title: '删除验收临时项目', sourceKind: 'imported' });
+  await page.reload();
+  const temporaryCard = page.locator('.project-card').filter({ hasText: '删除验收临时项目' });
+  await expect(temporaryCard).toBeVisible();
+  page.once('dialog', (dialog) => dialog.accept());
+  await temporaryCard.getByRole('button', { name: '删除' }).click();
+  await expect(temporaryCard).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByText('删除验收临时项目')).toHaveCount(0);
 });
 
 test('multi-project shooting progress persists without mobile overflow', async ({ page }, testInfo) => {
@@ -30,7 +79,7 @@ test('multi-project shooting progress persists without mobile overflow', async (
 
   await page.getByRole('checkbox', { name: '10 ★ 仲町下坡' }).check();
   await expect(page.getByTestId('progress-count')).toContainText('1 / 38组完成 · 3 / 67条');
-  await expect(page.getByText('已保存到当前浏览器')).toBeVisible();
+  await expect(page.getByText('已保存到远程账户')).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole('checkbox', { name: '10 ★ 仲町下坡' })).toBeChecked();

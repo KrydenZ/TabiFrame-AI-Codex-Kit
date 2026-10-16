@@ -57,7 +57,7 @@ export function EditingPanel({ project, completedShotIds, onResetProgress }: Edi
         <button className="action-button danger" type="button" disabled={busy} onClick={() => void resetProgress()}><RotateCcw aria-hidden="true" />清空勾选</button>
       </div>
       {message && <p className="action-message" role="status">{message}</p>}
-      <p className="storage-warning">项目与勾选保存在当前浏览器。导出备份不含账号令牌、视频文件或其他隐私凭据；在项目列表导入时，如 ID 冲突会自动创建独立恢复副本。</p>
+      <p className="storage-warning">项目与勾选会保存到当前 Sites 登录账户；本机数据库只作离线缓存。导出备份不含账号令牌、视频文件或其他隐私凭据；导入时如 ID 冲突会自动创建独立恢复副本。</p>
     </section>
   );
 }

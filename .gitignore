@@ -7,5 +7,7 @@ dist/
 coverage/
 test-results/
 playwright-report/
+.wrangler/
+.dev.vars*
 debug.log
 .DS_Store

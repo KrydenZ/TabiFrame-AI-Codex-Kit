@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Pencil } from 'lucide-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { EditingPanel } from '../components/shooting/EditingPanel';
 import { ShootingBasics } from '../components/shooting/ShootingBasics';
@@ -21,7 +21,7 @@ export function ShootingPage() {
     ? location.state.importMessage
     : null;
 
-  if (project === null) return <main className="state-shell"><p>正在读取本机项目…</p></main>;
+  if (project === null) return <main className="state-shell"><p>正在读取项目…</p></main>;
   if (!project) {
     return <main className="state-shell"><AlertTriangle aria-hidden="true" /><h1>找不到这个项目</h1><p>项目可能尚未导入，或浏览器站点数据已经被清除。</p><Link className="primary-link" to="/">返回项目列表</Link></main>;
   }
@@ -31,7 +31,7 @@ export function ShootingPage() {
 
   return (
     <main className="page-shell">
-      <nav className="shooting-nav"><Link className="back-link" to="/"><ArrowLeft aria-hidden="true" />所有项目</Link><span>{project.sourceKind === 'reference' ? '成田基准计划' : project.sourceKind === 'demo' ? '演示计划' : '我的导入计划'}</span></nav>
+      <nav className="shooting-nav"><Link className="back-link" to="/"><ArrowLeft aria-hidden="true" />所有项目</Link><Link className="back-link" to={`/projects/${project.projectId}/edit`}><Pencil aria-hidden="true" />修改资料</Link></nav>
       {importMessage && <p className="inline-message" role="status">{importMessage}</p>}
       <ShootingHero project={project} totalGroups={totals.totalGroups} totalClips={totals.totalClips} />
       <StickyProgress totals={totals} saveState={progress.saveState} errorMessage={progress.errorMessage} />

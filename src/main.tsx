@@ -3,15 +3,15 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { App } from './app/App';
 import { AppErrorBoundary } from './app/AppErrorBoundary';
-import { ensureSeedProjects } from './db/projects';
+import { syncRemoteProjects } from './db/projects';
 import './styles/index.css';
 
 async function bootstrap() {
   let startupError: string | null = null;
   try {
-    await ensureSeedProjects();
+    await syncRemoteProjects();
   } catch (error) {
-    console.error('TabiFrame 本机项目初始化失败', error);
+    console.error('TabiFrame 远程项目同步失败', error);
     startupError = error instanceof Error ? error.message : '未知存储错误';
   }
   createRoot(document.getElementById('root')!).render(

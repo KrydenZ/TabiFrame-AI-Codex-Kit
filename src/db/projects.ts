@@ -1,6 +1,9 @@
 import { db, progressKey, type ShotProgressRecord } from './database';
 import { seedProjects } from '../fixtures/projects';
 import { projectBackupSchema, vlogProjectSchema, type ProjectBackup, type VlogProject } from '../domain/schemas/project';
+import { createRemoteProject, deleteRemoteProject, fetchRemoteSnapshot, putRemoteProgress, putRemoteProject } from './remote';
+
+const REMOTE_MIGRATION_KEY = 'tabiframe-remote-migration-v1';
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -23,8 +26,10 @@ export async function saveProject(input: unknown): Promise<VlogProject> {
   const parsed = vlogProjectSchema.parse(input);
   const existing = await db.projects.get(parsed.projectId);
   const project = { ...parsed, createdAt: existing?.createdAt ?? parsed.createdAt ?? nowIso(), updatedAt: nowIso() };
-  await db.projects.put(project);
-  return project;
+  const completedShotIds = (await db.shotProgress.where('projectId').equals(project.projectId).toArray()).map((item) => item.shotId);
+  const remoteProject = await putRemoteProject(project, completedShotIds);
+  await db.projects.put(remoteProject);
+  return remoteProject;
 }
 
 export async function importGeneratedProject(input: unknown): Promise<ImportBackupResult> {
@@ -41,8 +46,9 @@ export async function importGeneratedProject(input: unknown): Promise<ImportBack
     createdAt: now,
     updatedAt: now,
   });
-  await db.projects.add(project);
-  return { project, collisionRemapped };
+  const remoteProject = await createRemoteProject(project, []);
+  await db.projects.add(remoteProject);
+  return { project: remoteProject, collisionRemapped };
 }
 
 export function createProjectBackup(project: VlogProject, completedShotIds: readonly string[]): ProjectBackup {
@@ -87,11 +93,65 @@ export async function importProjectBackup(input: unknown): Promise<ImportBackupR
     key: progressKey(projectId, shotId), projectId, shotId, completedAt: now, updatedAt: now,
   }));
 
+  const remoteProject = await createRemoteProject(project, backup.completedShotIds);
   await db.transaction('rw', db.projects, db.shotProgress, async () => {
-    await db.projects.add(project);
+    await db.projects.add(remoteProject);
     if (records.length) await db.shotProgress.bulkAdd(records);
   });
-  return { project, collisionRemapped };
+  return { project: remoteProject, collisionRemapped };
+}
+
+export async function deleteProject(projectId: string): Promise<void> {
+  await deleteRemoteProject(projectId);
+  await db.transaction('rw', db.projects, db.shotProgress, async () => {
+    await db.shotProgress.where('projectId').equals(projectId).delete();
+    await db.projects.delete(projectId);
+  });
+}
+
+export async function syncRemoteProjects(): Promise<{ migratedCount: number; unreadableCount: number }> {
+  const localProjects = (await db.projects.toArray()).flatMap((row) => {
+    const parsed = vlogProjectSchema.safeParse(row);
+    return parsed.success ? [parsed.data] : [];
+  });
+  const localProgress = await db.shotProgress.toArray();
+  let remote = await fetchRemoteSnapshot();
+  let migratedCount = 0;
+  const migrationPending = window.localStorage.getItem(REMOTE_MIGRATION_KEY) !== 'done';
+
+  if (migrationPending) {
+    const remoteById = new Map(remote.projects.map((project) => [project.projectId, project]));
+    const remoteProgressByProject = new Map<string, Set<string>>();
+    for (const record of remote.progress) {
+      const ids = remoteProgressByProject.get(record.projectId) ?? new Set<string>();
+      ids.add(record.shotId);
+      remoteProgressByProject.set(record.projectId, ids);
+    }
+    const candidates = localProjects.length ? localProjects : remote.projects.length ? [] : seedProjects.map(withTimestamps);
+    for (const project of candidates) {
+      const localIds = localProgress.filter((item) => item.projectId === project.projectId).map((item) => item.shotId);
+      const remoteProject = remoteById.get(project.projectId);
+      if (!remoteProject) {
+        await putRemoteProject(project, localIds);
+        migratedCount += 1;
+        continue;
+      }
+      const merged = new Set([...(remoteProgressByProject.get(project.projectId) ?? []), ...localIds]);
+      if (merged.size !== (remoteProgressByProject.get(project.projectId)?.size ?? 0)) {
+        await putRemoteProgress(project.projectId, [...merged]);
+      }
+    }
+    window.localStorage.setItem(REMOTE_MIGRATION_KEY, 'done');
+    remote = await fetchRemoteSnapshot();
+  }
+
+  await db.transaction('rw', db.projects, db.shotProgress, async () => {
+    await db.projects.clear();
+    await db.shotProgress.clear();
+    if (remote.projects.length) await db.projects.bulkPut(remote.projects);
+    if (remote.progress.length) await db.shotProgress.bulkPut(remote.progress);
+  });
+  return { migratedCount, unreadableCount: remote.unreadableCount };
 }
 
 export function formatValidationError(error: unknown): string {

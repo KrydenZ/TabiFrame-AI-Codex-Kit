@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { db, progressKey, type ShotProgressRecord } from '../db/database';
+import { putRemoteProgress } from '../db/remote';
 
 export type SaveState = 'loading' | 'ready' | 'saving' | 'saved' | 'error';
 
@@ -35,7 +36,7 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
         }
       } catch (error) {
         if (!cancelled) {
-          setErrorMessage('无法读取本机拍摄进度：' + toErrorMessage(error));
+          setErrorMessage('无法读取拍摄进度缓存：' + toErrorMessage(error));
           setSaveState('error');
         }
       }
@@ -57,6 +58,15 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
       setSaveState('saving');
 
       try {
+        await putRemoteProgress(projectId, [...next]);
+      } catch (error) {
+        setCompletedShotIds(previous);
+        setErrorMessage('远程保存失败，刚才的勾选未写入：' + toErrorMessage(error));
+        setSaveState('error');
+        return;
+      }
+
+      try {
         if (completed) {
           const now = new Date().toISOString();
           const record: ShotProgressRecord = {
@@ -73,8 +83,7 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
         setErrorMessage(null);
         setSaveState('saved');
       } catch (error) {
-        setCompletedShotIds(previous);
-        setErrorMessage('进度保存失败，刚才的勾选未写入：' + toErrorMessage(error));
+        setErrorMessage('远程已保存，但本机缓存更新失败；刷新页面可重新同步：' + toErrorMessage(error));
         setSaveState('error');
       }
     },
@@ -87,6 +96,15 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
       const next = new Set(shotIds);
       setCompletedShotIds(next);
       setSaveState('saving');
+
+      try {
+        await putRemoteProgress(projectId, [...next]);
+      } catch (error) {
+        setCompletedShotIds(previous);
+        setErrorMessage('远程进度更新失败，已恢复原状态：' + toErrorMessage(error));
+        setSaveState('error');
+        throw error;
+      }
 
       try {
         await db.transaction('rw', db.shotProgress, async () => {
@@ -105,10 +123,8 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
         setErrorMessage(null);
         setSaveState('saved');
       } catch (error) {
-        setCompletedShotIds(previous);
-        setErrorMessage('进度更新失败，已恢复原状态：' + toErrorMessage(error));
+        setErrorMessage('远程已保存，但本机缓存更新失败；刷新页面可重新同步：' + toErrorMessage(error));
         setSaveState('error');
-        throw error;
       }
     },
     [completedShotIds, projectId],

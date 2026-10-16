@@ -39,7 +39,7 @@ describe('ShootingPage progress', () => {
     await user.click(shot10);
 
     expect(screen.getByTestId('progress-count')).toHaveTextContent('1 / 38组完成 · 3 / 67条');
-    await screen.findByText('已保存到当前浏览器');
+    await screen.findByText('已保存到远程账户');
   });
 
   it('restores the saved checkbox after remounting', async () => {
@@ -48,7 +48,7 @@ describe('ShootingPage progress', () => {
     const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
     await user.click(shot10);
-    await screen.findByText('已保存到当前浏览器');
+    await screen.findByText('已保存到远程账户');
     first.unmount();
 
     renderPage();
@@ -63,7 +63,7 @@ describe('ShootingPage progress', () => {
     const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
     await user.click(shot10);
-    await screen.findByText('已保存到当前浏览器');
+    await screen.findByText('已保存到远程账户');
 
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
     await user.click(screen.getByRole('button', { name: '清空勾选' }));
@@ -79,7 +79,7 @@ describe('ShootingPage progress', () => {
     const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
     await user.click(shot10);
-    await screen.findByText('已保存到当前浏览器');
+    await screen.findByText('已保存到远程账户');
 
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     await user.click(screen.getByRole('button', { name: '清空勾选' }));

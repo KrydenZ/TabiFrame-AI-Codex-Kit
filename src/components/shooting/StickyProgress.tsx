@@ -9,11 +9,11 @@ interface StickyProgressProps {
 }
 
 const saveMessages: Record<SaveState, string> = {
-  loading: '正在读取本机进度…',
-  ready: '勾选会立即保存在当前浏览器',
-  saving: '正在保存…',
-  saved: '已保存到当前浏览器',
-  error: '本机保存不可用，请先导出进度备份',
+  loading: '正在读取远程进度…',
+  ready: '勾选会立即保存到你的远程账户',
+  saving: '正在远程保存…',
+  saved: '已保存到远程账户',
+  error: '远程保存不可用，请检查网络后重试',
 };
 
 export function StickyProgress({ totals, saveState, errorMessage }: StickyProgressProps) {
