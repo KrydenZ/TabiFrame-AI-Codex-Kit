@@ -11,7 +11,7 @@ export default defineConfig({
     react(),
     sites({ mockAuth: true }),
     cloudflare({
-      viteEnvironment: { name: 'worker' },
+      viteEnvironment: { name: 'server' },
       inspectorPort: false,
       config: {
         name: 'server',

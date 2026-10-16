@@ -9,7 +9,7 @@ const migration = readdirSync('drizzle').find((name) => name.endsWith('.sql'));
 if (!migration) throw new Error('No D1 migration found in drizzle/.');
 const migrationResult = spawnSync(
   process.execPath,
-  ['./node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DB', '--local', '--config', 'dist/worker/wrangler.json', '--persist-to', `${process.cwd()}\\.wrangler\\state`, '--file', `drizzle/${migration}`],
+  ['./node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DB', '--local', '--config', 'dist/server/wrangler.json', '--persist-to', `${process.cwd()}\\.wrangler\\state`, '--file', `drizzle/${migration}`],
   { cwd: process.cwd(), encoding: 'utf8', env: toolEnv },
 );
 const migrationOutput = `${migrationResult.stdout ?? ''}\n${migrationResult.stderr ?? ''}`;

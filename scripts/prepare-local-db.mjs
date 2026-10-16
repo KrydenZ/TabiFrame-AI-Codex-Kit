@@ -8,7 +8,7 @@ const toolEnv = { ...process.env, XDG_CONFIG_HOME: `${process.cwd()}\\.wrangler\
 for (const migration of migrations) {
   const result = spawnSync(
     process.execPath,
-    ['./node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DB', '--local', '--config', 'dist/worker/wrangler.json', '--persist-to', `${process.cwd()}\\.wrangler\\state`, '--file', `drizzle/${migration}`],
+    ['./node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DB', '--local', '--config', 'dist/server/wrangler.json', '--persist-to', `${process.cwd()}\\.wrangler\\state`, '--file', `drizzle/${migration}`],
     { cwd: process.cwd(), encoding: 'utf8', env: toolEnv },
   );
   const output = `${result.stdout ?? ''}\n${result.stderr ?? ''}`;
