@@ -13,6 +13,7 @@
 ## V2 新增
 
 - `examples/minatomirai-line-2026-10-17.project.json`：面向 2026-10-17 的港未来线沿线计划，用于验证不同目的地、多项目隔离和通用渲染；5 个步骤各补充 1 张带来源、作者和许可证的 Wikimedia Commons 参考图；天气、运行和现场限制明确留作出发前核对。
+- 两份内置计划包含经 OpenStreetMap Nominatim 核对的主要地点坐标。页面只在用户查看地图时请求当前视口所需的标准瓦片，持续显示“© OpenStreetMap contributors”署名；路线仅为策划示意，不提供导航保证。
 - `TABIFRAME_AI_PHASE_PLAN_PROTOTYPE_V2.md`：唯一最终开发基准。
 
 ## 已清理或降级

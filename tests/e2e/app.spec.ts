@@ -10,6 +10,7 @@ const naritaReference = JSON.parse(
 
 test.beforeEach(async ({ page }) => {
   await page.route('https://commons.wikimedia.org/**', (route) => route.abort());
+  await page.route('https://tile.openstreetmap.org/**', (route) => route.abort());
   await page.goto('/signin-with-chatgpt?return_to=/');
   await expect(page.getByRole('heading', { name: '旅行 Vlog 策划账本' })).toBeVisible();
   await page.evaluate(async (canonicalProjects) => {
@@ -93,6 +94,8 @@ test('multi-project shooting progress persists without mobile overflow', async (
   await expect(page.locator('figure.reference-card')).toHaveCount(5);
   await expect(page.locator('.shooting-section')).toHaveCount(5);
   await expect(page.locator('.shooting-section figure.reference-card')).toHaveCount(5);
+  await expect(page.getByRole('heading', { name: '成田机场 → 成田山散步路线' })).toBeVisible();
+  await expect(page.locator('.route-map-stops li')).toHaveCount(5);
 
   await page.getByPlaceholder('查询镜头名称、拍法或步骤').fill('三重塔');
   await expect(page.getByRole('checkbox')).toHaveCount(2);

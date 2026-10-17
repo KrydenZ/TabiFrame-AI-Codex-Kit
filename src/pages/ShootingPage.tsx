@@ -6,6 +6,7 @@ import { ShootingBasics } from '../components/shooting/ShootingBasics';
 import { ShootingHero } from '../components/shooting/ShootingHero';
 import { ShootingSection } from '../components/shooting/ShootingSection';
 import { StickyProgress } from '../components/shooting/StickyProgress';
+import { RouteMap } from '../components/shooting/RouteMap';
 import { calculateProgress } from '../domain/progress';
 import { useProject } from '../hooks/useProject';
 import { useShotProgress } from '../hooks/useShotProgress';
@@ -72,6 +73,8 @@ export function ShootingPage() {
           <div><strong>出发前需要自行核实</strong><p>{project.needsVerification.join('、')}</p></div>
         </section>
       )}
+
+      {project.routeMap && <RouteMap routeMap={project.routeMap} />}
 
       <nav className="route-index" aria-label="路线步骤导航">
         <div className="route-index-title"><MapPinned aria-hidden="true" /><div><strong>路线步骤</strong><span>按步骤查看参考图与镜头</span></div></div>

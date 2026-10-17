@@ -12,6 +12,7 @@ describe('Narita fixture', () => {
     expect(shots.reduce((sum, shot) => sum + shot.clipCount, 0)).toBe(67);
     expect(project.sections.flatMap((section) => section.referenceImages)).toHaveLength(5);
     expect(project.sections.every((section) => section.referenceImages.length === 1)).toBe(true);
+    expect(project.routeMap?.stops).toHaveLength(5);
     expect(new Set(shots.map((shot) => shot.id)).size).toBe(38);
     expect(shots.map((shot) => shot.title)).not.toContain('食物');
     expect(shots.map((shot) => shot.title)).not.toContain('茶杯 / 休息');
@@ -47,6 +48,15 @@ describe('Narita fixture', () => {
       text: '营业时间已核实',
       status: 'verified',
     }];
+
+    const result = vlogProjectSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects a map stop linked to a missing route section', () => {
+    const invalid = structuredClone(project);
+    if (!invalid.routeMap) throw new Error('Narita fixture should include a route map.');
+    invalid.routeMap.stops[0].sectionId = 'missing-section';
 
     const result = vlogProjectSchema.safeParse(invalid);
     expect(result.success).toBe(false);

@@ -33,6 +33,8 @@ describe('ShootingPage progress', () => {
 
     expect(await screen.findAllByRole('checkbox')).toHaveLength(38);
     expect(screen.getAllByRole('figure')).toHaveLength(5);
+    expect(screen.getByRole('heading', { name: '成田机场 → 成田山散步路线' })).toBeVisible();
+    expect(screen.getByRole('img', { name: /共 5 个主要地点/ })).toBeVisible();
 
     const shot10 = await screen.findByRole('checkbox', { name: '10 ★ 仲町下坡' });
     await waitFor(() => expect(shot10).toBeEnabled());
@@ -91,8 +93,9 @@ describe('ShootingPage progress', () => {
   });
 
   it('keeps source attribution when all remote images fail', async () => {
-    renderPage();
-    const images = await screen.findAllByRole('img');
+    const { container } = renderPage();
+    await screen.findAllByRole('figure');
+    const images = [...container.querySelectorAll<HTMLImageElement>('.reference-card img')];
     expect(images).toHaveLength(5);
     images.forEach((image) => fireEvent.error(image));
 

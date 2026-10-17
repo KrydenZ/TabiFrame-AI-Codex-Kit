@@ -6,6 +6,34 @@ const httpsUrlSchema = z
 
 export const sourceKindSchema = z.enum(['reference', 'demo', 'imported', 'generated']);
 
+export const routeMapStopSchema = z
+  .object({
+    id: z.string().trim().min(1),
+    label: z.string().trim().min(1).max(40),
+    detail: z.string().trim().max(80).default(''),
+    lat: z.number().min(-85).max(85),
+    lng: z.number().min(-180).max(180),
+    sectionId: z.string().trim().min(1).optional(),
+    modeToNext: z.enum(['rail', 'walk']).optional(),
+  })
+  .strict();
+
+export const routeMapSchema = z
+  .object({
+    title: z.string().trim().min(1).max(80),
+    summary: z.string().trim().min(1).max(240),
+    zoom: z.number().int().min(2).max(18),
+    stops: z.array(routeMapStopSchema).min(2).max(12),
+  })
+  .strict()
+  .superRefine((routeMap, context) => {
+    const ids = new Set<string>();
+    routeMap.stops.forEach((stop, index) => {
+      if (ids.has(stop.id)) context.addIssue({ code: 'custom', message: '地图地点 ID 必须唯一', path: ['stops', index, 'id'] });
+      ids.add(stop.id);
+    });
+  });
+
 export const referenceImageSchema = z
   .object({
     caption: z.string().trim().min(1),
@@ -81,6 +109,7 @@ export const vlogProjectSchema = z
     travelState: z.enum(['planned', 'visited']).default('planned'),
     travelReflection: z.string().trim().max(2000).default(''),
     tags: z.array(z.string().trim().min(1).max(30)).max(12).default([]),
+    routeMap: routeMapSchema.optional(),
     createdAt: z.string().datetime().optional(),
     updatedAt: z.string().datetime().optional(),
     notes: z.array(z.string().trim().min(1)).default([]),
@@ -105,6 +134,12 @@ export const vlogProjectSchema = z
         }
         shotIds.add(shot.id);
       });
+    });
+
+    project.routeMap?.stops.forEach((stop, stopIndex) => {
+      if (stop.sectionId && !sectionIds.has(stop.sectionId)) {
+        context.addIssue({ code: 'custom', message: '地图地点必须关联到项目内已有的路线步骤', path: ['routeMap', 'stops', stopIndex, 'sectionId'] });
+      }
     });
   });
 
@@ -133,4 +168,6 @@ export type VlogProject = z.infer<typeof vlogProjectSchema>;
 export type ShootingSection = z.infer<typeof shootingSectionSchema>;
 export type Shot = z.infer<typeof shotSchema>;
 export type ReferenceImage = z.infer<typeof referenceImageSchema>;
+export type RouteMap = z.infer<typeof routeMapSchema>;
+export type RouteMapStop = z.infer<typeof routeMapStopSchema>;
 export type ProjectBackup = z.infer<typeof projectBackupSchema>;

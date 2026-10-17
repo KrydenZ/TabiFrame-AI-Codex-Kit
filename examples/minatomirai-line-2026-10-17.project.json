@@ -15,6 +15,19 @@
   "targetVideoMinutes": 8,
   "stylePresetId": "japan-solo-walk",
   "sourceKind": "generated",
+  "routeMap": {
+    "title": "港未来线沿线与主要地点",
+    "summary": "蓝线按港未来线六站顺序标记位置；本期以地面散步取景为主，可按体力在任意车站搭车衔接。",
+    "zoom": 14,
+    "stops": [
+      {"id":"mm-yokohama","label":"横滨站","detail":"东口出发","lat":35.465807,"lng":139.622266,"sectionId":"yokohama-shintakashima","modeToNext":"rail"},
+      {"id":"mm-shintakashima","label":"新高岛站","detail":"宽街与现代建筑","lat":35.4615344,"lng":139.6264247,"sectionId":"yokohama-shintakashima","modeToNext":"rail"},
+      {"id":"mm-minatomirai","label":"港未来站","detail":"临海天际线与公共空间","lat":35.4572327,"lng":139.6328453,"sectionId":"minatomirai-waterfront","modeToNext":"rail"},
+      {"id":"mm-bashamichi","label":"马车道站","detail":"砖墙与开港纪念会馆方向","lat":35.4504575,"lng":139.6361165,"sectionId":"bashamichi","modeToNext":"rail"},
+      {"id":"mm-nihonodori","label":"日本大通站","detail":"日本大通与山下公园方向","lat":35.4467354,"lng":139.6426718,"sectionId":"nihonodori-yamashita","modeToNext":"rail"},
+      {"id":"mm-motomachi","label":"元町·中华街站","detail":"朝阳门、中华街与海边收尾","lat":35.4437126,"lng":139.648368,"sectionId":"motomachi-finish"}
+    ]
+  },
   "notes": [
     "沿港未来线地面方向散步，不要求每站进站，也不需要从头到尾贴着线路走。",
     "这次重点是城市尺度变化、海边、建筑和脚步；不安排美食、购物或陌生人特写。",

@@ -4,7 +4,7 @@ import { projectBackupSchema, vlogProjectSchema, type ProjectBackup, type VlogPr
 import { createRemoteProject, deleteRemoteProject, fetchRemoteSnapshot, putRemoteProgress, putRemoteProject } from './remote';
 
 const REMOTE_MIGRATION_KEY = 'tabiframe-remote-migration-v1';
-const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v4';
+const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v5';
 const FEATURED_PROJECT_ID = 'minatomirai-line-2026-10-17';
 const RETIRED_PROJECT_IDS = new Set(['kamakura-demo', 'yokohama-line-2026-10-17']);
 
@@ -18,13 +18,15 @@ function withTimestamps(project: VlogProject): VlogProject {
 }
 
 function referenceSignature(project: VlogProject): string {
-  return project.sections.map((section) => `${section.id}:${section.referenceImages.map((image) => image.sourceUrl).join(',')}`).join('|');
+  const references = project.sections.map((section) => `${section.id}:${section.referenceImages.map((image) => image.sourceUrl).join(',')}`).join('|');
+  return references + '::' + JSON.stringify(project.routeMap ?? null);
 }
 
 function withSeedReferences(project: VlogProject, seed: VlogProject): VlogProject {
   const referencesBySection = new Map(seed.sections.map((section) => [section.id, section.referenceImages]));
   return {
     ...project,
+    routeMap: seed.routeMap ?? project.routeMap,
     sections: project.sections.map((section) => ({
       ...section,
       referenceImages: referencesBySection.get(section.id) ?? section.referenceImages,

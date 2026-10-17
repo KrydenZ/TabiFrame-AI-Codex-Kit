@@ -12,6 +12,18 @@
   "targetVideoMinutes": 7.5,
   "stylePresetId": "japan-solo-walk",
   "sourceKind": "reference",
+  "routeMap": {
+    "title": "成田机场 → 成田山散步路线",
+    "summary": "先从空港第 2 航站楼搭京成线到京成成田站，再沿表参道步行前往新胜寺与成田山公园；返程沿原路回到车站。",
+    "zoom": 12,
+    "stops": [
+      {"id":"narita-airport","label":"空港第2航站楼站","detail":"机场出发，搭乘京成线","lat":35.7731974,"lng":140.3872118,"sectionId":"airport","modeToNext":"rail"},
+      {"id":"keisei-narita","label":"京成成田站","detail":"下车后开始地面散步","lat":35.776475,"lng":140.3152569,"sectionId":"airport","modeToNext":"walk"},
+      {"id":"narita-omotesando","label":"成田山表参道","detail":"老街、坡道与沿途细节","lat":35.7824205,"lng":140.3156399,"sectionId":"omotesando","modeToNext":"walk"},
+      {"id":"naritasan-shinshoji","label":"成田山新胜寺","detail":"总门、仁王门与寺院建筑","lat":35.7863311,"lng":140.3172238,"sectionId":"shinji","modeToNext":"walk"},
+      {"id":"naritasan-park","label":"成田山公园","detail":"池塘、树林与安静环境声","lat":35.7865667,"lng":140.320777,"sectionId":"park"}
+    ]
+  },
   "notes": [
     "本例拍摄计划源于历史成田篇，现场拍摄风格与后期默认剪映预设可以分别保存。",
     "拍摄无需拍满，不能把未拍镜头当已有素材。"

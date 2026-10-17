@@ -26,6 +26,7 @@ ${JSON.stringify(input, null, 2)}
 7. 严格遵守 contentFocus 和 avoidContent；除非用户明确要求，不要自动加入美食、购物、网红打卡或室内消费场景。
 8. 镜头数量必须在给定时间内实际可完成，优先少而清楚，不为凑数量重复同类镜头。
 9. 每个路线分段优先提供 1 张确有来源、作者和许可证的 HTTPS 参考照片；无法可靠核实时该分段 referenceImages 留空，绝不能编造链接或署名。
+10. 如果能可靠确认主要地点坐标，可提供可选 routeMap；地点按真实行程排序并关联已有 sectionId。坐标不确定时省略整个 routeMap，不得猜测定位。
 
 JSON 必须严格符合：
 {
@@ -48,6 +49,15 @@ JSON 必须严格符合：
   "travelState": "planned",
   "travelReflection": "",
   "tags": ["地点或主题标签"],
+  "routeMap": {
+    "title": "路线地图标题",
+    "summary": "交通与步行关系说明",
+    "zoom": 14,
+    "stops": [
+      {"id":"map-stop-1","label":"出发地点","detail":"简短说明","lat":35.0,"lng":139.0,"sectionId":"section-id","modeToNext":"rail"},
+      {"id":"map-stop-2","label":"主要地点","detail":"简短说明","lat":35.01,"lng":139.01,"sectionId":"section-id"}
+    ]
+  },
   "notes": ["策划说明"],
   "editingTimeline": [["00:00–00:40", "章节内容"]],
   "sections": [{
@@ -59,5 +69,5 @@ JSON 必须严格符合：
   "needsVerification": ["需要用户核实的事实"]
 }
 
-同一项目内 section id 和 shot id 不得重复。页面需要项目摘要、拍摄基础、分段说明、参考图、镜头清单、提示与剪映文字所需数据，但镜头数量必须由目的地、偏好和可用时间决定。内容必须因目的地而具体变化，不要只替换标题。`;
+routeMap 是可选字段；不输出时请直接省略，不能填 null。至少需要 2 个、最多 12 个地点，最后一个地点省略 modeToNext。同一项目内 section id、shot id 和地图地点 id 不得重复。页面需要项目摘要、拍摄基础、分段说明、参考图、镜头清单、提示与剪映文字所需数据，但镜头数量必须由目的地、偏好和可用时间决定。内容必须因目的地而具体变化，不要只替换标题。`;
 }
