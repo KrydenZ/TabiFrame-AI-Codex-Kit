@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { db } from '../db/database';
 import { deleteProject, formatValidationError, importProjectBackup, syncRemoteProjects } from '../db/projects';
 import { calculateProgress } from '../domain/progress';
+import { projectCoverLabel, selectProjectCover } from '../domain/projectCover';
 import { vlogProjectSchema } from '../domain/schemas/project';
 import type { ReferenceImage } from '../domain/schemas/project';
 
@@ -27,8 +28,14 @@ function displayDate(value?: string) {
 
 function ProjectCover({ image }: { image?: ReferenceImage }) {
   const [failed, setFailed] = useState(false);
-  if (!image || failed) return <div className="project-cover project-cover-empty"><MapPin aria-hidden="true" /><span>{failed ? '参考图暂不可用' : '暂无参考图'}</span></div>;
-  return <img className="project-cover" src={image.url} alt="" loading="lazy" onError={() => setFailed(true)} />;
+  if (!image || failed) return <div className="project-cover-frame project-cover-empty"><MapPin aria-hidden="true" /><span>{failed ? '代表景点图片暂不可用' : '暂无代表景点图片'}</span></div>;
+  const label = projectCoverLabel(image);
+  return (
+    <figure className="project-cover-frame">
+      <img className="project-cover" src={image.url} alt={label} loading="lazy" onError={() => setFailed(true)} />
+      <figcaption><MapPin aria-hidden="true" /><span>{label}</span></figcaption>
+    </figure>
+  );
 }
 
 export function ProjectListPage() {
@@ -184,7 +191,7 @@ export function ProjectListPage() {
         {isLoading && <div className="empty-state loading-state" role="status"><LoaderCircle className="is-spinning" aria-hidden="true" /><h3>正在载入</h3><p>正在整理你的项目，很快就好。</p></div>}
         {!isLoading && visibleProjects.length === 0 && <div className="empty-state"><h3>{projects.length ? '没有匹配的项目' : '还没有可读取的项目'}</h3><p>{projects.length ? '换一个关键词，或重置查询条件试试。' : '可以新建计划，或从 JSON 备份恢复。损坏的数据不会被渲染或执行。'}</p>{projects.length > 0 && <button className="action-button" type="button" onClick={resetControls}>重置查询条件</button>}</div>}
         {visibleProjects.map(({ project, totals }) => {
-          const cover = project.sections.flatMap((section) => section.referenceImages)[0];
+          const cover = selectProjectCover(project);
           return (
             <article className="project-card" key={project.projectId}>
               <ProjectCover image={cover} />

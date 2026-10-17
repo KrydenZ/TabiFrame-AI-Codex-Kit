@@ -1,4 +1,5 @@
 import naritaJson from '../examples/narita.project.json';
+import minatomiraiJson from '../examples/minatomirai-line-2026-10-17.project.json';
 import { calculateProgress, getAllShots } from '../src/domain/progress';
 import { vlogProjectSchema } from '../src/domain/schemas/project';
 
@@ -60,5 +61,13 @@ describe('Narita fixture', () => {
 
     const result = vlogProjectSchema.safeParse(invalid);
     expect(result.success).toBe(false);
+  });
+});
+
+describe('Minatomirai fixture', () => {
+  it('describes numbered locations without obsolete line colours', () => {
+    const project = vlogProjectSchema.parse(minatomiraiJson);
+    expect(project.routeMap?.summary).not.toMatch(/蓝线|绿线/);
+    expect(project.routeMap?.summary).toContain('六个主要地点');
   });
 });

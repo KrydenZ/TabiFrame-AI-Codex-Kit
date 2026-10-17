@@ -1725,12 +1725,50 @@ a,
   padding: 0;
 }
 
+.project-cover-frame {
+  position: relative;
+  height: 184px;
+  margin: 0;
+  overflow: hidden;
+  background: #e7ebe8;
+}
+
 .project-cover {
   display: block;
   width: 100%;
-  height: 168px;
-  background: #e7ebe8;
+  height: 100%;
   object-fit: cover;
+}
+
+.project-cover-frame::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 48%;
+  background: linear-gradient(transparent, rgba(12, 20, 27, 0.72));
+  content: '';
+  pointer-events: none;
+}
+
+.project-cover-frame figcaption {
+  position: absolute;
+  z-index: 1;
+  right: 12px;
+  bottom: 11px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.project-cover-frame figcaption svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
 }
 
 .project-cover-empty {
@@ -1741,6 +1779,10 @@ a,
   gap: 5px;
   background: linear-gradient(145deg, #dfe8e1, #f2f4ef);
   color: #66806e;
+}
+
+.project-cover-empty::after {
+  display: none;
 }
 
 .project-cover-empty svg {
@@ -2702,7 +2744,7 @@ button.route-map-marker-button {
     padding: 0;
   }
 
-  .project-cover {
+  .project-cover-frame {
     height: 150px;
   }
 

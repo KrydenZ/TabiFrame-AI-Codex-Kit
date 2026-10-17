@@ -17,7 +17,7 @@
   "sourceKind": "generated",
   "routeMap": {
     "title": "港未来线沿线与主要地点",
-    "summary": "蓝线按港未来线六站顺序标记位置；本期以地面散步取景为主，可按体力在任意车站搭车衔接。",
+    "summary": "依次标出港未来线沿线六个主要地点；本期以地面散步取景为主，可按体力在任意车站搭车衔接。",
     "zoom": 14,
     "stops": [
       {"id":"mm-yokohama","label":"横滨站","detail":"东口出发","lat":35.465807,"lng":139.622266,"sectionId":"yokohama-shintakashima","modeToNext":"rail"},

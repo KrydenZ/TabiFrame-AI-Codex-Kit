@@ -4,7 +4,7 @@ import { projectBackupSchema, vlogProjectSchema, type ProjectBackup, type VlogPr
 import { createRemoteProject, deleteRemoteProject, fetchRemoteSnapshot, putRemoteProgress, putRemoteProject } from './remote';
 
 const REMOTE_MIGRATION_KEY = 'tabiframe-remote-migration-v1';
-const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v5';
+const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v6';
 const FEATURED_PROJECT_ID = 'minatomirai-line-2026-10-17';
 const RETIRED_PROJECT_IDS = new Set(['kamakura-demo', 'yokohama-line-2026-10-17']);
 

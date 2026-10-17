@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach } from 'vitest';
 import { db } from '../src/db/database';
 import { ensureSeedProjects } from '../src/db/projects';
+import { minatomiraiLineProject, naritaProject } from '../src/fixtures/projects';
+import { projectCoverLabel, selectProjectCover } from '../src/domain/projectCover';
 import { ProjectListPage } from '../src/pages/ProjectListPage';
 
 beforeEach(async () => {
@@ -15,6 +17,11 @@ beforeEach(async () => {
 afterEach(() => cleanup());
 
 describe('ProjectListPage data recovery', () => {
+  it('uses a recognizable landmark instead of the first transport reference as the cover', () => {
+    expect(projectCoverLabel(selectProjectCover(naritaProject)!)).toBe('新胜寺总门');
+    expect(projectCoverLabel(selectProjectCover(minatomiraiLineProject)!)).toBe('港未来临海天际线');
+  });
+
   it('isolates an unreadable record and keeps valid projects usable', async () => {
     await db.table('projects').add({ projectId: 'broken-project', title: '损坏记录' });
 
