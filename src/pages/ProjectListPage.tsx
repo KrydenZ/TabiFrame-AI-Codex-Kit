@@ -1,6 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowRight, CalendarDays, Cloud, FolderOpen, MapPin, Pencil, Plus, RefreshCw, Search, Trash2, Upload } from 'lucide-react';
+import { ArrowRight, CalendarDays, Cloud, FolderOpen, LoaderCircle, MapPin, Pencil, Plus, RefreshCw, Search, Trash2, Upload, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from '../db/database';
 import { deleteProject, formatValidationError, importProjectBackup, syncRemoteProjects } from '../db/projects';
@@ -27,7 +27,7 @@ function displayDate(value?: string) {
 
 function ProjectCover({ image }: { image?: ReferenceImage }) {
   const [failed, setFailed] = useState(false);
-  if (!image || failed) return <div className="project-cover project-cover-empty"><MapPin aria-hidden="true" /><span>参考图片未加载</span></div>;
+  if (!image || failed) return <div className="project-cover project-cover-empty"><MapPin aria-hidden="true" /><span>{failed ? '参考图暂不可用' : '暂无参考图'}</span></div>;
   return <img className="project-cover" src={image.url} alt="" loading="lazy" onError={() => setFailed(true)} />;
 }
 
@@ -57,6 +57,7 @@ export function ProjectListPage() {
     };
   }, []);
   const projects = projectState?.projects ?? [];
+  const isLoading = projectState === undefined;
   const normalizedQuery = query.trim().toLocaleLowerCase('zh-CN');
   const visibleProjects = projects
     .filter(({ project, totals }) => {
@@ -78,6 +79,14 @@ export function ProjectListPage() {
       return (b.project.updatedAt ?? '').localeCompare(a.project.updatedAt ?? '');
     });
   const visitedCount = projects.filter(({ project }) => project.travelState === 'visited').length;
+  const hasActiveFilters = Boolean(query.trim()) || stateFilter !== 'all' || progressFilter !== 'all' || sortMode !== 'updated';
+
+  function resetControls() {
+    setQuery('');
+    setStateFilter('all');
+    setProgressFilter('all');
+    setSortMode('updated');
+  }
 
   async function refreshNow() {
     setSyncing(true);
@@ -129,7 +138,7 @@ export function ProjectListPage() {
         <div>
           <span className="brand-kicker">TABIFRAME AI</span>
           <h1>旅行 Vlog 策划账本</h1>
-          <p>{projects.length} 次旅行 · {visitedCount} 次已走过</p>
+          <p>{isLoading ? '正在读取旅行记录…' : `${projects.length} 次旅行 · ${visitedCount} 次已走过`}</p>
         </div>
         <Link className="primary-link" to="/projects/new"><Plus aria-hidden="true" />新建旅行计划</Link>
       </header>
@@ -147,11 +156,11 @@ export function ProjectListPage() {
       </div>
 
       <section className="project-controls" aria-label="查询、筛选和排序旅行项目">
-        <label className="project-search">
+        <div className="project-search">
           <Search aria-hidden="true" />
-          <span className="visually-hidden">查询旅行项目</span>
-          <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="查询项目、地点、标签、步骤或镜头" />
-        </label>
+          <input aria-label="查询旅行项目" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="查询项目、地点、标签、步骤或镜头" />
+          {query && <button className="clear-search" type="button" aria-label="清空查询" onClick={() => setQuery('')}><X aria-hidden="true" /></button>}
+        </div>
         <div className="filter-row">
           <label><span>旅行状态</span><select value={stateFilter} onChange={(event) => setStateFilter(event.target.value as StateFilter)}><option value="all">全部</option><option value="planned">计划中</option><option value="visited">已走过</option></select></label>
           <label><span>拍摄进度</span><select value={progressFilter} onChange={(event) => setProgressFilter(event.target.value as ProgressFilter)}><option value="all">全部</option><option value="unfinished">未完成</option><option value="complete">已完成</option></select></label>
@@ -167,9 +176,13 @@ export function ProjectListPage() {
         </div>
       )}
 
-      <p className="result-count">显示 {visibleProjects.length} / {projects.length} 个项目</p>
+      <div className="result-summary">
+        <p className="result-count">{isLoading ? '正在整理项目…' : `显示 ${visibleProjects.length} / ${projects.length} 个项目`}</p>
+        {!isLoading && hasActiveFilters && <button className="text-button" type="button" onClick={resetControls}>重置查询条件</button>}
+      </div>
       <section className="project-grid" aria-label="旅行项目列表">
-        {visibleProjects.length === 0 && <div className="empty-state"><h3>{projects.length ? '没有匹配的项目' : '还没有可读取的项目'}</h3><p>{projects.length ? '换一个关键词或清除筛选条件试试。' : '可以新建计划，或从 JSON 备份恢复。损坏的数据不会被渲染或执行。'}</p></div>}
+        {isLoading && <div className="empty-state loading-state" role="status"><LoaderCircle className="is-spinning" aria-hidden="true" /><h3>正在载入</h3><p>正在整理你的项目，很快就好。</p></div>}
+        {!isLoading && visibleProjects.length === 0 && <div className="empty-state"><h3>{projects.length ? '没有匹配的项目' : '还没有可读取的项目'}</h3><p>{projects.length ? '换一个关键词，或重置查询条件试试。' : '可以新建计划，或从 JSON 备份恢复。损坏的数据不会被渲染或执行。'}</p>{projects.length > 0 && <button className="action-button" type="button" onClick={resetControls}>重置查询条件</button>}</div>}
         {visibleProjects.map(({ project, totals }) => {
           const cover = project.sections.flatMap((section) => section.referenceImages)[0];
           return (
@@ -181,7 +194,7 @@ export function ProjectListPage() {
                   <span className="card-date"><CalendarDays aria-hidden="true" />{project.shootDate || project.season || '日期待定'}</span>
                 </div>
                 <div><h3>{project.title}</h3><p>{project.destination}</p></div>
-                {project.tags.length > 0 && <div className="tag-list">{project.tags.slice(0, 4).map((tag) => <span key={tag}>#{tag}</span>)}</div>}
+                {project.tags.length > 0 && <div className="tag-list">{project.tags.slice(0, 4).map((tag) => <span key={tag}>#{tag}</span>)}{project.tags.length > 4 && <span aria-label={`另有 ${project.tags.length - 4} 个标签`}>+{project.tags.length - 4}</span>}</div>}
                 {project.travelReflection && <p className="memory-preview">{project.travelReflection}</p>}
                 <div className="project-progress" aria-label={`${totals.completedGroups}组已完成`}><span style={{ width: `${totals.percentage}%` }} /></div>
                 <div className="project-card-footer">

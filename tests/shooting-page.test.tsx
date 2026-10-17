@@ -99,4 +99,18 @@ describe('ShootingPage progress', () => {
     expect(screen.getAllByText('参考照片未加载')).toHaveLength(5);
     expect(screen.getAllByRole('link', { name: /查看原图与署名/ })).toHaveLength(5);
   });
+
+  it('clears shot search and filter together', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    const search = await screen.findByRole('searchbox', { name: '查询镜头' });
+    await user.type(search, '不存在的镜头');
+    expect(screen.getByText('没有匹配的镜头')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: '显示全部镜头' }));
+    expect(search).toHaveValue('');
+    expect(screen.getAllByRole('checkbox')).toHaveLength(38);
+    expect(screen.getByRole('button', { name: '全部' })).toHaveAttribute('aria-pressed', 'true');
+  });
 });

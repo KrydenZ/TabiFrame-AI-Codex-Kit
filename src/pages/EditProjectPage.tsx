@@ -10,6 +10,12 @@ type SectionField = 'time' | 'title' | 'subtitle' | 'tip';
 type ShotField = 'title' | 'description' | 'clipCount' | 'recordSeconds' | 'priority';
 type ReferenceField = keyof ReferenceImage;
 
+function StepReferenceThumbnail({ image }: { image?: ReferenceImage }) {
+  const [failed, setFailed] = useState(false);
+  if (!image || failed) return <div className="step-image-empty"><ImageOff aria-hidden="true" /><span>{failed ? '图片暂不可用' : '暂无参考图'}</span></div>;
+  return <img src={image.url} alt="" loading="lazy" onError={() => setFailed(true)} />;
+}
+
 function uniqueSectionId(project: VlogProject): string {
   const existing = new Set(project.sections.map((section) => section.id));
   const base = `step-${Date.now().toString(36)}`;
@@ -209,7 +215,7 @@ export function EditProjectPage() {
           <label><span>设备</span><input value={form.camera} onChange={(event) => updateProject('camera', event.target.value)} /></label>
           <label><span>视频规格</span><input value={form.videoResolution} onChange={(event) => updateProject('videoResolution', event.target.value)} /></label>
           <label className="full-field"><span>标签</span><input value={tagsText} onChange={(event) => setTagsText(event.target.value)} placeholder="例如：北海道、冬天、电车、海边（用顿号或逗号分隔）" /></label>
-          <label className="full-field"><span>旅行回顾</span><textarea maxLength={2000} value={form.travelReflection} onChange={(event) => updateProject('travelReflection', event.target.value)} placeholder="旅行结束后写几句：实际走了哪里、最喜欢哪一段、剪辑时想保留什么感觉。这里只是项目回顾，不是现场逐镜头备注。" /></label>
+          <label className="full-field"><span>旅行回顾</span><textarea maxLength={2000} value={form.travelReflection} onChange={(event) => updateProject('travelReflection', event.target.value)} placeholder="旅行结束后写几句：实际走了哪里、最喜欢哪一段、剪辑时想保留什么感觉。这里只是项目回顾，不是现场逐镜头备注。" /><small className="field-hint">{form.travelReflection.length} / 2000 字</small></label>
         </section>
 
         <section className="route-editor">
@@ -218,9 +224,7 @@ export function EditProjectPage() {
             <article className="route-step-editor" key={section.id}>
               <header className="route-step-header">
                 <div className="step-number">{String(sectionIndex + 1).padStart(2, '0')}</div>
-                {section.referenceImages[0]
-                  ? <img src={section.referenceImages[0].url} alt={section.referenceImages[0].caption} loading="lazy" />
-                  : <div className="step-image-empty"><ImageOff aria-hidden="true" /><span>暂无参考图</span></div>}
+                <StepReferenceThumbnail key={section.referenceImages[0]?.url ?? 'empty'} image={section.referenceImages[0]} />
                 <div><strong>{section.title}</strong><span>{section.shots.length} 组镜头 · {section.referenceImages.length} 张参考图</span></div>
                 <div className="move-buttons"><button type="button" aria-label={`上移${section.title}`} disabled={sectionIndex === 0} onClick={() => moveSection(sectionIndex, -1)}><ArrowUp aria-hidden="true" /></button><button type="button" aria-label={`下移${section.title}`} disabled={sectionIndex === form.sections.length - 1} onClick={() => moveSection(sectionIndex, 1)}><ArrowDown aria-hidden="true" /></button><button className="danger-icon" type="button" aria-label={`删除步骤${section.title}`} disabled={form.sections.length <= 1} onClick={() => removeSection(sectionIndex)}><Trash2 aria-hidden="true" /></button></div>
               </header>

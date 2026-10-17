@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, ArrowLeft, MapPinned, Pencil, Search } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, MapPinned, Pencil, Search, X } from 'lucide-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { EditingPanel } from '../components/shooting/EditingPanel';
 import { ShootingBasics } from '../components/shooting/ShootingBasics';
@@ -42,6 +42,12 @@ export function ShootingPage() {
     }),
   })).filter((section) => section.shots.length > 0);
   const visibleShotCount = visibleSections.reduce((count, section) => count + section.shots.length, 0);
+  const hasActiveShotFilter = Boolean(shotQuery.trim()) || shotFilter !== 'all';
+
+  function resetShotTools() {
+    setShotQuery('');
+    setShotFilter('all');
+  }
 
   return (
     <main className="page-shell">
@@ -73,11 +79,11 @@ export function ShootingPage() {
       </nav>
 
       <section className="shot-tools" aria-label="查询和筛选计划镜头">
-        <label><Search aria-hidden="true" /><span className="visually-hidden">查询镜头</span><input type="search" value={shotQuery} onChange={(event) => setShotQuery(event.target.value)} placeholder="查询镜头名称、拍法或步骤" /></label>
+        <div className="shot-search"><Search aria-hidden="true" /><input aria-label="查询镜头" type="search" value={shotQuery} onChange={(event) => setShotQuery(event.target.value)} placeholder="查询镜头名称、拍法或步骤" />{shotQuery && <button className="clear-search" type="button" aria-label="清空镜头查询" onClick={() => setShotQuery('')}><X aria-hidden="true" /></button>}</div>
         <div className="shot-filter-row">
-          {([['all', '全部'], ['pending', '未勾选'], ['completed', '已勾选'], ['must', '只看必拍']] as const).map(([value, label]) => <button key={value} type="button" className={shotFilter === value ? 'is-active' : ''} onClick={() => setShotFilter(value)}>{label}</button>)}
+          {([['all', '全部'], ['pending', '未勾选'], ['completed', '已勾选'], ['must', '只看必拍']] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={shotFilter === value} className={shotFilter === value ? 'is-active' : ''} onClick={() => setShotFilter(value)}>{label}</button>)}
         </div>
-        <span>当前显示 {visibleShotCount} / {totals.totalGroups} 组</span>
+        <div className="shot-result-summary"><span>当前显示 {visibleShotCount} / {totals.totalGroups} 组</span>{hasActiveShotFilter && <button className="text-button" type="button" onClick={resetShotTools}>清除筛选</button>}</div>
       </section>
 
       {visibleSections.map((section) => (
@@ -90,7 +96,7 @@ export function ShootingPage() {
           onToggle={(shotId, completed) => void progress.toggleShot(shotId, completed)}
         />
       ))}
-      {visibleSections.length === 0 && <div className="empty-state"><h3>没有匹配的镜头</h3><p>换一个关键词，或切回“全部”继续查看。</p></div>}
+      {visibleSections.length === 0 && <div className="empty-state"><h3>没有匹配的镜头</h3><p>换一个关键词，或清除筛选继续查看。</p><button className="action-button" type="button" onClick={resetShotTools}>显示全部镜头</button></div>}
 
       <EditingPanel project={project} completedShotIds={progress.completedShotIds} onResetProgress={progress.resetProgress} />
 

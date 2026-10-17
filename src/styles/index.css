@@ -5,6 +5,7 @@
 :root {
   color: #1e2c26;
   background: #f4f4ec;
+  color-scheme: light;
   font-family: system-ui, -apple-system, "Noto Sans SC", "PingFang SC", "Microsoft Yahei", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -35,8 +36,16 @@ body {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
+}
+
+button,
+a,
+label,
+summary {
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:disabled {
@@ -100,6 +109,7 @@ button:disabled {
   font-family: "Noto Serif SC", "Songti SC", serif;
   font-size: clamp(30px, 6vw, 48px);
   line-height: 1.18;
+  text-wrap: balance;
 }
 
 .app-header p,
@@ -1336,6 +1346,30 @@ a,
   color: var(--ink-900);
 }
 
+.clear-search {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-500);
+  cursor: pointer;
+}
+
+.clear-search:hover {
+  background: #e9eee8;
+  color: var(--ink-900);
+}
+
+.clear-search svg {
+  width: 17px;
+  height: 17px;
+}
+
 .project-search:focus-within {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(49, 108, 168, 0.16);
@@ -1626,10 +1660,57 @@ a,
   resize: vertical;
 }
 
+.field-hint {
+  align-self: flex-end;
+  color: var(--ink-500);
+  font-size: 11px;
+  font-weight: 650;
+}
+
 .result-count {
-  margin: 0 2px 10px;
+  margin: 0;
   color: var(--ink-500);
   font-size: 12px;
+}
+
+.result-summary,
+.shot-result-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.result-summary {
+  min-height: 34px;
+  margin: 0 2px 8px;
+}
+
+.text-button {
+  min-height: 34px;
+  padding: 4px 7px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--blue-strong);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.text-button:hover {
+  background: #e8eee7;
+}
+
+.loading-state svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 8px;
+  color: var(--blue);
+}
+
+.empty-state .action-button {
+  margin-top: 8px;
 }
 
 .new-project-actions {
@@ -1721,6 +1802,7 @@ a,
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .updated-at {
@@ -1804,8 +1886,8 @@ a,
 .move-buttons button {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid var(--line-strong);
   border-radius: 8px;
@@ -1875,6 +1957,12 @@ a,
   cursor: pointer;
   font-size: 13px;
   font-weight: 850;
+}
+
+.photo-editor-details summary:focus-visible,
+.shot-editor-details summary:focus-visible {
+  outline: 3px solid rgba(227, 168, 87, 0.45);
+  outline-offset: 2px;
 }
 
 .photo-empty-editor,
@@ -2008,6 +2096,8 @@ a,
   margin: 9px 0 0;
   color: #506158;
   font-size: 13px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .route-index,
@@ -2048,6 +2138,7 @@ a,
   overflow-x: auto;
   padding-bottom: 3px;
   scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
 }
 
 .route-index-scroll a {
@@ -2072,7 +2163,7 @@ a,
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
-.shot-tools > label {
+.shot-search {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2081,12 +2172,12 @@ a,
   border-radius: 10px;
 }
 
-.shot-tools > label svg {
+.shot-search > svg {
   width: 17px;
   color: var(--ink-500);
 }
 
-.shot-tools input {
+.shot-search input {
   width: 100%;
   min-height: 43px;
   border: 0;
@@ -2094,11 +2185,17 @@ a,
   background: transparent;
 }
 
+.shot-search:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(79, 118, 94, 0.16);
+}
+
 .shot-filter-row {
   display: flex;
   gap: 6px;
   overflow-x: auto;
   margin: 9px 0 6px;
+  scrollbar-width: thin;
 }
 
 .shot-filter-row button {
@@ -2125,6 +2222,40 @@ a,
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 0.14em;
+}
+
+.shooting-section {
+  scroll-margin-top: 104px;
+}
+
+.project-card h3,
+.section-heading h2,
+.route-step-header strong,
+.shot-title-line strong,
+.reference-card figcaption,
+.page-footer li {
+  overflow-wrap: anywhere;
+}
+
+.primary-link:focus-visible,
+.back-link:focus-visible,
+.sync-button:focus-visible,
+.clear-search:focus-visible,
+.text-button:focus-visible,
+.move-buttons button:focus-visible,
+.shot-filter-row button:focus-visible,
+.route-index-scroll a:focus-visible,
+.filter-row select:focus-visible,
+.trip-form select:focus-visible,
+.trip-form textarea:focus-visible,
+.route-fields input:focus-visible,
+.route-fields textarea:focus-visible,
+.shot-editor-card input:focus-visible,
+.shot-editor-card textarea:focus-visible,
+.shot-editor-card select:focus-visible,
+.photo-fields input:focus-visible {
+  outline: 3px solid rgba(227, 168, 87, 0.45);
+  outline-offset: 2px;
 }
 
 @media (max-width: 540px) {
@@ -2362,6 +2493,11 @@ a,
   .route-step-header > .move-buttons {
     grid-column: 2 / -1;
     justify-content: flex-end;
+  }
+
+  .move-buttons button {
+    width: 46px;
+    height: 46px;
   }
 
   .route-fields,

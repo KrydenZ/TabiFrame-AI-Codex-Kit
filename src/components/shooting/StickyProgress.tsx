@@ -26,9 +26,9 @@ export function StickyProgress({ totals, saveState, errorMessage }: StickyProgre
         : Database;
 
   return (
-    <section className="sticky-progress" aria-label="今日拍摄进度">
+    <section className="sticky-progress" aria-label="拍摄计划进度">
       <div className="progress-heading" aria-live="polite">
-        <span>今日拍摄进度</span>
+        <span>拍摄计划进度</span>
         <strong data-testid="progress-count">
           {totals.completedGroups} / {totals.totalGroups}组完成 · {totals.completedClips} / {totals.totalClips}条
         </strong>
