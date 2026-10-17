@@ -2199,11 +2199,11 @@ a,
 
 .route-map-path-halo {
   stroke: rgba(255, 255, 255, 0.95);
-  stroke-width: 10;
+  stroke-width: 5;
 }
 
 .route-map-path {
-  stroke-width: 6;
+  stroke-width: 3;
 }
 
 .route-map-path-rail {
@@ -2217,30 +2217,52 @@ a,
 
 .route-map-leader {
   stroke: #526b5c;
-  stroke-width: 2;
-  stroke-dasharray: 3 4;
+  stroke-width: 1.25;
+  stroke-dasharray: 2 4;
 }
 
-.route-map-marker circle {
-  fill: #fffefa;
-  stroke: #223a2e;
-  stroke-width: 3;
-  filter: drop-shadow(0 2px 3px rgba(18, 36, 28, 0.22));
-}
-
-.route-map-marker > text:not(.route-map-label) {
-  fill: #223a2e;
-  font-size: 14px;
-  font-weight: 900;
-}
-
-.route-map-label {
+.route-map-anchor {
   fill: #223a2e;
   stroke: rgba(255, 255, 255, 0.96);
-  stroke-width: 5px;
-  paint-order: stroke;
-  font-size: 15px;
-  font-weight: 850;
+  stroke-width: 1.5;
+}
+
+.route-map-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.route-map-marker-button {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #223a2e;
+  border-radius: 50%;
+  background: rgba(255, 254, 250, 0.96);
+  box-shadow: 0 1px 4px rgba(18, 36, 28, 0.24);
+  color: #223a2e;
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.route-map-marker-button:is(:hover, :focus-visible) {
+  z-index: 2;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(49, 108, 168, 0.24), 0 2px 7px rgba(18, 36, 28, 0.25);
+}
+
+.route-map-marker-button > span {
+  display: block;
+  font-variant-numeric: tabular-nums;
 }
 
 .route-map-attribution {
@@ -2616,8 +2638,10 @@ a,
     grid-template-columns: 1fr;
   }
 
-  .route-map-label {
-    display: none;
+  .route-map-marker-button {
+    width: 16px;
+    height: 16px;
+    font-size: 7px;
   }
 
   .action-buttons {

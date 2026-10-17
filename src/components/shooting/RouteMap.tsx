@@ -20,10 +20,10 @@ function buildScene(routeMap: RouteMapData) {
     let markerX = point.x;
     let markerY = point.y;
     for (let attempt = 0; attempt < 7; attempt += 1) {
-      const overlaps = placedMarkers.some((placed) => Math.hypot(markerX - placed.markerX, markerY - placed.markerY) < 42);
+      const overlaps = placedMarkers.some((placed) => Math.hypot(markerX - placed.markerX, markerY - placed.markerY) < 26);
       if (!overlaps) break;
       const angle = (index * 137.5 + attempt * 47) * Math.PI / 180;
-      const radius = 38 + attempt * 10;
+      const radius = 25 + attempt * 7;
       markerX = point.x + Math.cos(angle) * radius;
       markerY = point.y + Math.sin(angle) * radius;
     }
@@ -49,7 +49,13 @@ function buildScene(routeMap: RouteMapData) {
       tiles.push({ tileX, tileY, url: `https://tile.openstreetmap.org/${routeMap.zoom}/${wrappedX}/${tileY}.png` });
     }
   }
-  return { points, tiles, viewBox: `${x} ${y} ${width} ${height}`, center: routeMap.stops[Math.floor(routeMap.stops.length / 2)] };
+  return {
+    points,
+    tiles,
+    viewBox: `${x} ${y} ${width} ${height}`,
+    viewport: { x, y, width, height },
+    center: routeMap.stops[Math.floor(routeMap.stops.length / 2)],
+  };
 }
 
 export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
@@ -71,19 +77,27 @@ export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
           {scene.points.slice(0, -1).map((point, index) => {
             const next = scene.points[index + 1];
             const mode = point.stop.modeToNext ?? 'walk';
-            return <g key={`segment-${point.stop.id}`}><line className="route-map-path-halo" x1={point.x} y1={point.y} x2={next.x} y2={next.y} /><line className={`route-map-path route-map-path-${mode}`} x1={point.x} y1={point.y} x2={next.x} y2={next.y} /></g>;
+            return <g key={`segment-${point.stop.id}`}><line className="route-map-path-halo" vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={next.x} y2={next.y} /><line className={`route-map-path route-map-path-${mode}`} vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={next.x} y2={next.y} /></g>;
           })}
           {scene.points.map((point, index) => (
             <g key={point.stop.id}>
-              {(point.markerX !== point.x || point.markerY !== point.y) && <line className="route-map-leader" x1={point.x} y1={point.y} x2={point.markerX} y2={point.markerY} />}
-              <g className="route-map-marker" transform={`translate(${point.markerX} ${point.markerY})`}>
-                <circle r="17" />
-                <text textAnchor="middle" dominantBaseline="central">{index + 1}</text>
-                <text className="route-map-label" x="23" y={index % 2 === 0 ? -9 : 16}>{point.stop.label}</text>
-              </g>
+              {(point.markerX !== point.x || point.markerY !== point.y) && <line className="route-map-leader" vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={point.markerX} y2={point.markerY} />}
+              <circle className="route-map-anchor" vectorEffect="non-scaling-stroke" cx={point.x} cy={point.y} r="2.5" />
             </g>
           ))}
         </svg>
+        <div className="route-map-markers">
+          {scene.points.map((point, index) => {
+            const style = {
+              left: `${(point.markerX - scene.viewport.x) / scene.viewport.width * 100}%`,
+              top: `${(point.markerY - scene.viewport.y) / scene.viewport.height * 100}%`,
+            };
+            const label = `${index + 1} · ${point.stop.label}`;
+            return point.stop.sectionId
+              ? <a key={point.stop.id} className="route-map-marker-button" href={`#${point.stop.sectionId}`} style={style} aria-label={label} title={label}><span>{index + 1}</span></a>
+              : <span key={point.stop.id} className="route-map-marker-button" style={style} aria-label={label} title={label}><span>{index + 1}</span></span>;
+          })}
+        </div>
         <div className="route-map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a></div>
       </div>
       <div className="route-map-legend"><span><TrainFront aria-hidden="true" />轨道交通</span><span><Footprints aria-hidden="true" />步行</span><span><WifiOff aria-hidden="true" />底图需联网</span></div>

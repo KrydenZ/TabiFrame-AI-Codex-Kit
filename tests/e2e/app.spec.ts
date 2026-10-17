@@ -96,6 +96,10 @@ test('multi-project shooting progress persists without mobile overflow', async (
   await expect(page.locator('.shooting-section figure.reference-card')).toHaveCount(5);
   await expect(page.getByRole('heading', { name: '成田机场 → 成田山散步路线' })).toBeVisible();
   await expect(page.locator('.route-map-stops li')).toHaveCount(5);
+  await expect(page.locator('.route-map-marker-button')).toHaveCount(5);
+  const firstMapMarker = await page.locator('.route-map-marker-button').first().boundingBox();
+  expect(firstMapMarker?.width).toBeLessThanOrEqual(18);
+  expect(firstMapMarker?.height).toBeLessThanOrEqual(18);
 
   await page.getByPlaceholder('查询镜头名称、拍法或步骤').fill('三重塔');
   await expect(page.getByRole('checkbox')).toHaveCount(2);
