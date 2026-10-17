@@ -102,6 +102,7 @@ test('multi-project shooting progress persists without mobile overflow', async (
   expect(firstMapMarker?.height).toBeLessThanOrEqual(18);
   await expect(page.getByText('OpenStreetMap 在线地图')).toBeVisible();
   await expect(page.locator('.route-map-leader')).toHaveCount(0);
+  await expect(page.locator('.route-map-path')).toHaveCount(0);
   await expect(page.locator('.route-map-canvas image').first()).toHaveAttribute('href', /tile\.openstreetmap\.org\/13\//);
 
   const shootingUrl = page.url();

@@ -1,4 +1,4 @@
-import { ExternalLink, Footprints, Map as MapIcon, MapPinned, TrainFront } from 'lucide-react';
+import { ExternalLink, Map as MapIcon, MapPinned } from 'lucide-react';
 import type { RouteMap as RouteMapData } from '../../domain/schemas/project';
 import { scrollToSection } from '../../lib/scrollToSection';
 
@@ -78,11 +78,6 @@ export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
           <title>{routeMap.title}</title>
           <rect className="route-map-base" x="-100000" y="-100000" width="200000" height="200000" />
           {scene.tiles.map((tile) => <image key={`${tile.tileX}-${tile.tileY}`} href={tile.url} x={tile.tileX * tile.size} y={tile.tileY * tile.size} width={tile.size} height={tile.size} preserveAspectRatio="none" />)}
-          {scene.points.slice(0, -1).map((point, index) => {
-            const next = scene.points[index + 1];
-            const mode = point.stop.modeToNext ?? 'walk';
-            return <g key={`segment-${point.stop.id}`}><line className="route-map-path-halo" vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={next.x} y2={next.y} /><line className={`route-map-path route-map-path-${mode}`} vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={next.x} y2={next.y} /></g>;
-          })}
         </svg>
         <div className="route-map-markers">
           {scene.points.map((point, index) => {
@@ -98,7 +93,7 @@ export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
         </div>
         <div className="route-map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a></div>
       </div>
-      <div className="route-map-legend"><span><TrainFront aria-hidden="true" />轨道交通</span><span><Footprints aria-hidden="true" />步行</span><span><MapIcon aria-hidden="true" />OpenStreetMap 在线地图</span></div>
+      <div className="route-map-legend"><span><MapIcon aria-hidden="true" />OpenStreetMap 在线地图</span></div>
       <ol className="route-map-stops">
         {routeMap.stops.map((stop, index) => (
           <li key={stop.id}>
