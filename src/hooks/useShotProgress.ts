@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { db, progressKey, type ShotProgressRecord } from '../db/database';
-import { putRemoteProgress } from '../db/remote';
+import { db, progressKey } from '../db/database';
+import { fetchRemoteProject, patchRemoteProgress, putRemoteProgress } from '../db/remote';
 
 export type SaveState = 'loading' | 'ready' | 'saving' | 'saved' | 'error';
 
@@ -11,6 +11,7 @@ interface UseShotProgressResult {
   toggleShot: (shotId: string, completed: boolean) => Promise<void>;
   resetProgress: () => Promise<void>;
   replaceProgress: (shotIds: readonly string[]) => Promise<void>;
+  refreshProgress: () => Promise<void>;
 }
 
 function toErrorMessage(error: unknown): string {
@@ -21,6 +22,33 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
   const [completedShotIds, setCompletedShotIds] = useState<Set<string>>(new Set());
   const [saveState, setSaveState] = useState<SaveState>('loading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const writeLocalProgress = useCallback(async (shotIds: readonly string[]) => {
+    const now = new Date().toISOString();
+    await db.transaction('rw', db.shotProgress, async () => {
+      await db.shotProgress.where('projectId').equals(projectId).delete();
+      if (shotIds.length) {
+        await db.shotProgress.bulkPut(shotIds.map((shotId) => ({
+          key: progressKey(projectId, shotId), projectId, shotId, completedAt: now, updatedAt: now,
+        })));
+      }
+    });
+  }, [projectId]);
+
+  const refreshProgress = useCallback(async () => {
+    try {
+      const remote = await fetchRemoteProject(projectId);
+      await db.projects.put(remote.project);
+      await writeLocalProgress(remote.completedShotIds);
+      setCompletedShotIds(new Set(remote.completedShotIds));
+      setErrorMessage(null);
+      setSaveState('ready');
+    } catch (error) {
+      setErrorMessage('无法取得远程最新进度：' + toErrorMessage(error));
+      setSaveState('error');
+      throw error;
+    }
+  }, [projectId, writeLocalProgress]);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,6 +76,18 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
     };
   }, [projectId]);
 
+  useEffect(() => {
+    function refreshWhenVisible() {
+      if (document.visibilityState === 'visible') void refreshProgress().catch(() => undefined);
+    }
+    window.addEventListener('focus', refreshWhenVisible);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => {
+      window.removeEventListener('focus', refreshWhenVisible);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
+  }, [refreshProgress]);
+
   const toggleShot = useCallback(
     async (shotId: string, completed: boolean) => {
       const previous = new Set(completedShotIds);
@@ -58,7 +98,9 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
       setSaveState('saving');
 
       try {
-        await putRemoteProgress(projectId, [...next]);
+        const remoteShotIds = await patchRemoteProgress(projectId, shotId, completed);
+        await writeLocalProgress(remoteShotIds);
+        setCompletedShotIds(new Set(remoteShotIds));
       } catch (error) {
         setCompletedShotIds(previous);
         setErrorMessage('远程保存失败，刚才的勾选未写入：' + toErrorMessage(error));
@@ -66,28 +108,10 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
         return;
       }
 
-      try {
-        if (completed) {
-          const now = new Date().toISOString();
-          const record: ShotProgressRecord = {
-            key: progressKey(projectId, shotId),
-            projectId,
-            shotId,
-            completedAt: now,
-            updatedAt: now,
-          };
-          await db.shotProgress.put(record);
-        } else {
-          await db.shotProgress.delete(progressKey(projectId, shotId));
-        }
-        setErrorMessage(null);
-        setSaveState('saved');
-      } catch (error) {
-        setErrorMessage('远程已保存，但本机缓存更新失败；刷新页面可重新同步：' + toErrorMessage(error));
-        setSaveState('error');
-      }
+      setErrorMessage(null);
+      setSaveState('saved');
     },
-    [completedShotIds, projectId],
+    [completedShotIds, projectId, writeLocalProgress],
   );
 
   const replaceProgress = useCallback(
@@ -107,19 +131,7 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
       }
 
       try {
-        await db.transaction('rw', db.shotProgress, async () => {
-          await db.shotProgress.where('projectId').equals(projectId).delete();
-          const now = new Date().toISOString();
-          await db.shotProgress.bulkPut(
-            [...next].map((shotId) => ({
-              key: progressKey(projectId, shotId),
-              projectId,
-              shotId,
-              completedAt: now,
-              updatedAt: now,
-            })),
-          );
-        });
+        await writeLocalProgress([...next]);
         setErrorMessage(null);
         setSaveState('saved');
       } catch (error) {
@@ -127,7 +139,7 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
         setSaveState('error');
       }
     },
-    [completedShotIds, projectId],
+    [completedShotIds, projectId, writeLocalProgress],
   );
 
   const resetProgress = useCallback(async () => {
@@ -135,7 +147,7 @@ export function useShotProgress(projectId: string): UseShotProgressResult {
   }, [replaceProgress]);
 
   return useMemo(
-    () => ({ completedShotIds, saveState, errorMessage, toggleShot, resetProgress, replaceProgress }),
-    [completedShotIds, errorMessage, replaceProgress, resetProgress, saveState, toggleShot],
+    () => ({ completedShotIds, saveState, errorMessage, toggleShot, resetProgress, replaceProgress, refreshProgress }),
+    [completedShotIds, errorMessage, refreshProgress, replaceProgress, resetProgress, saveState, toggleShot],
   );
 }

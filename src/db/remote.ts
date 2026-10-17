@@ -7,6 +7,11 @@ export interface RemoteSnapshot {
   unreadableCount: number;
 }
 
+export interface RemoteProjectSnapshot {
+  project: VlogProject;
+  completedShotIds: string[];
+}
+
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
     credentials: 'same-origin',
@@ -43,9 +48,29 @@ export async function createRemoteProject(project: VlogProject, completedShotIds
 export async function putRemoteProject(project: VlogProject, completedShotIds: readonly string[]): Promise<VlogProject> {
   const value = await requestJson<{ project: unknown }>(`/api/projects/${encodeURIComponent(project.projectId)}`, {
     method: 'PUT',
-    body: JSON.stringify({ project, completedShotIds }),
+    body: JSON.stringify({ project, completedShotIds, expectedUpdatedAt: project.updatedAt }),
   });
   return vlogProjectSchema.parse(value.project);
+}
+
+export async function fetchRemoteProject(projectId: string): Promise<RemoteProjectSnapshot> {
+  const value = await requestJson<{ project: unknown; completedShotIds: unknown }>(`/api/projects/${encodeURIComponent(projectId)}`);
+  const project = vlogProjectSchema.parse(value.project);
+  const knownIds = new Set(project.sections.flatMap((section) => section.shots.map((shot) => shot.id)));
+  const completedShotIds = Array.isArray(value.completedShotIds)
+    ? value.completedShotIds.filter((id): id is string => typeof id === 'string' && knownIds.has(id))
+    : [];
+  return { project, completedShotIds };
+}
+
+export async function patchRemoteProgress(projectId: string, shotId: string, completed: boolean): Promise<string[]> {
+  const value = await requestJson<{ completedShotIds: unknown }>(`/api/projects/${encodeURIComponent(projectId)}/progress`, {
+    method: 'PATCH',
+    body: JSON.stringify({ shotId, completed }),
+  });
+  return Array.isArray(value.completedShotIds)
+    ? value.completedShotIds.filter((id): id is string => typeof id === 'string')
+    : [];
 }
 
 export async function putRemoteProgress(projectId: string, completedShotIds: readonly string[]): Promise<void> {

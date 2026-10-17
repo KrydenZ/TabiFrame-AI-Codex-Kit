@@ -5,6 +5,7 @@ import { ShotRow } from './ShotRow';
 
 interface ShootingSectionProps {
   section: ShootingSectionType;
+  stepNumber: number;
   completedShotIds: ReadonlySet<string>;
   progressReady: boolean;
   onToggle: (shotId: string, completed: boolean) => void;
@@ -12,6 +13,7 @@ interface ShootingSectionProps {
 
 export function ShootingSection({
   section,
+  stepNumber,
   completedShotIds,
   progressReady,
   onToggle,
@@ -19,6 +21,7 @@ export function ShootingSection({
   return (
     <section className="shooting-section" id={section.id}>
       <header className="section-heading">
+        <div className="section-step">STEP {String(stepNumber).padStart(2, '0')}</div>
         <div className="section-time">{section.time}</div>
         <h2>{section.title}</h2>
         <p>{section.subtitle}</p>

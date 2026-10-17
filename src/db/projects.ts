@@ -4,7 +4,7 @@ import { projectBackupSchema, vlogProjectSchema, type ProjectBackup, type VlogPr
 import { createRemoteProject, deleteRemoteProject, fetchRemoteSnapshot, putRemoteProgress, putRemoteProject } from './remote';
 
 const REMOTE_MIGRATION_KEY = 'tabiframe-remote-migration-v1';
-const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v3';
+const CONTENT_REFRESH_KEY = 'tabiframe-content-refresh-2026-10-17-v4';
 const FEATURED_PROJECT_ID = 'minatomirai-line-2026-10-17';
 const RETIRED_PROJECT_IDS = new Set(['kamakura-demo', 'yokohama-line-2026-10-17']);
 
@@ -15,6 +15,21 @@ function nowIso(): string {
 function withTimestamps(project: VlogProject): VlogProject {
   const now = nowIso();
   return { ...project, createdAt: project.createdAt ?? now, updatedAt: project.updatedAt ?? now };
+}
+
+function referenceSignature(project: VlogProject): string {
+  return project.sections.map((section) => `${section.id}:${section.referenceImages.map((image) => image.sourceUrl).join(',')}`).join('|');
+}
+
+function withSeedReferences(project: VlogProject, seed: VlogProject): VlogProject {
+  const referencesBySection = new Map(seed.sections.map((section) => [section.id, section.referenceImages]));
+  return {
+    ...project,
+    sections: project.sections.map((section) => ({
+      ...section,
+      referenceImages: referencesBySection.get(section.id) ?? section.referenceImages,
+    })),
+  };
 }
 
 export async function ensureSeedProjects(): Promise<void> {
@@ -28,10 +43,22 @@ export async function ensureSeedProjects(): Promise<void> {
 export async function saveProject(input: unknown): Promise<VlogProject> {
   const parsed = vlogProjectSchema.parse(input);
   const existing = await db.projects.get(parsed.projectId);
-  const project = { ...parsed, createdAt: existing?.createdAt ?? parsed.createdAt ?? nowIso(), updatedAt: nowIso() };
-  const completedShotIds = (await db.shotProgress.where('projectId').equals(project.projectId).toArray()).map((item) => item.shotId);
+  const project = {
+    ...parsed,
+    createdAt: existing?.createdAt ?? parsed.createdAt ?? nowIso(),
+    updatedAt: existing?.updatedAt ?? parsed.updatedAt,
+  };
+  const validShotIds = new Set(project.sections.flatMap((section) => section.shots.map((shot) => shot.id)));
+  const completedShotIds = (await db.shotProgress.where('projectId').equals(project.projectId).toArray())
+    .map((item) => item.shotId)
+    .filter((shotId) => validShotIds.has(shotId));
   const remoteProject = await putRemoteProject(project, completedShotIds);
-  await db.projects.put(remoteProject);
+  await db.transaction('rw', db.projects, db.shotProgress, async () => {
+    await db.projects.put(remoteProject);
+    const records = await db.shotProgress.where('projectId').equals(project.projectId).toArray();
+    const staleKeys = records.filter((record) => !validShotIds.has(record.shotId)).map((record) => record.key);
+    if (staleKeys.length) await db.shotProgress.bulkDelete(staleKeys);
+  });
   return remoteProject;
 }
 
@@ -135,28 +162,33 @@ export async function syncRemoteProjects(): Promise<{ migratedCount: number; unr
     const naritaNeedsRefresh = remoteNarita?.sections
       .flatMap((section) => section.shots)
       .some((shot) => shot.title === '食物' || shot.title === '茶杯 / 休息');
-    if (naritaSeed && remoteNarita && naritaNeedsRefresh) {
+    const naritaReferencesNeedRefresh = naritaSeed && remoteNarita
+      ? referenceSignature(naritaSeed) !== referenceSignature(remoteNarita)
+      : false;
+    if (naritaSeed && remoteNarita && (naritaNeedsRefresh || naritaReferencesNeedRefresh)) {
       const completedShotIds = remote.progress
         .filter((record) => record.projectId === remoteNarita.projectId)
         .map((record) => record.shotId);
-      await putRemoteProject({
-        ...naritaSeed,
-        createdAt: remoteNarita.createdAt,
-        updatedAt: remoteNarita.updatedAt,
-      }, completedShotIds);
+      const refreshedNarita = naritaNeedsRefresh
+        ? { ...naritaSeed, createdAt: remoteNarita.createdAt, updatedAt: remoteNarita.updatedAt }
+        : withSeedReferences(remoteNarita, naritaSeed);
+      await putRemoteProject(refreshedNarita, completedShotIds);
       remote = await fetchRemoteSnapshot();
     }
 
     const featuredProject = seedProjects.find((project) => project.projectId === FEATURED_PROJECT_ID);
     const remoteFeatured = remote.projects.find((project) => project.projectId === FEATURED_PROJECT_ID);
-    if (featuredProject && remoteFeatured && remoteFeatured.targetVideoMinutes !== featuredProject.targetVideoMinutes) {
+    const featuredNeedsRefresh = featuredProject && remoteFeatured
+      ? remoteFeatured.targetVideoMinutes !== featuredProject.targetVideoMinutes
+        || referenceSignature(featuredProject) !== referenceSignature(remoteFeatured)
+      : false;
+    if (featuredProject && remoteFeatured && featuredNeedsRefresh) {
       const completedShotIds = remote.progress
         .filter((record) => record.projectId === FEATURED_PROJECT_ID)
         .map((record) => record.shotId);
       await putRemoteProject({
-        ...featuredProject,
-        createdAt: remoteFeatured.createdAt,
-        updatedAt: remoteFeatured.updatedAt,
+        ...withSeedReferences(remoteFeatured, featuredProject),
+        targetVideoMinutes: featuredProject.targetVideoMinutes,
       }, completedShotIds);
       remote = await fetchRemoteSnapshot();
     } else if (featuredProject && !remoteFeatured) {

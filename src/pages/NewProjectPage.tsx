@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { ArrowLeft, Clipboard, FileJson, Upload } from 'lucide-react';
+import { ArrowLeft, Clipboard, FileJson, Plus, Upload } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AiAccessNotice } from '../components/AiAccessNotice';
 import { formatValidationError, importGeneratedProject } from '../db/projects';
@@ -24,6 +24,51 @@ export function NewProjectPage() {
     event.preventDefault();
     setPrompt(buildGenerationPrompt(trip));
     setMessage('完整提示词已生成。复制给 ChatGPT/Codex，取得纯 JSON 后粘贴回来。');
+  }
+
+  async function createBlankRecord() {
+    if (!trip.destination.trim() || !trip.dateOrSeason.trim() || !trip.shootingWindow.trim()) {
+      setMessage('请先填写目的地、日期或季节，以及可用拍摄时间。');
+      return;
+    }
+    const now = new Date().toISOString();
+    const isIsoDate = /^\d{4}-\d{2}-\d{2}$/.test(trip.dateOrSeason.trim());
+    try {
+      const result = await importGeneratedProject({
+        schemaVersion: 1,
+        promptVersion: 'manual-record-v1',
+        projectId: `trip-${Date.now().toString(36)}`,
+        title: `${trip.destination.trim()}旅行记录`,
+        destination: trip.destination.trim(),
+        shootDate: isIsoDate ? trip.dateOrSeason.trim() : '',
+        season: isIsoDate ? undefined : trip.dateOrSeason.trim(),
+        shootWindow: trip.shootingWindow.trim(),
+        origin: trip.origin.trim() || undefined,
+        endLocation: trip.endLocation.trim() || undefined,
+        camera: trip.equipment.trim(),
+        orientation: 'landscape',
+        videoResolution: '',
+        targetVideoMinutes: trip.targetVideoMinutes,
+        stylePresetId: 'japan-solo-walk',
+        sourceKind: 'imported',
+        travelState: 'planned',
+        travelReflection: '',
+        tags: [],
+        createdAt: now,
+        updatedAt: now,
+        notes: ['手动创建的旅行记录；请在“修改与编排”中整理实际路线与计划镜头。'],
+        editingTimeline: [['00:00–待整理', '本期内容待编排']],
+        sections: [{
+          id: 'step-1', time: '时间待整理', title: '第一段行程', subtitle: '补充这一段去了哪里、想保留什么画面',
+          tip: '只记录真实行程；不确定的信息暂时留空。', referenceImages: [], factChecks: [],
+          shots: [{ id: 'shot-1', title: '第一组镜头', description: '补充真实画面内容或计划拍法', clipCount: 1, recordSeconds: 10, priority: 'normal', completed: false }],
+        }],
+        needsVerification: [],
+      });
+      navigate(`/projects/${result.project.projectId}/edit`);
+    } catch (error) {
+      setMessage('创建失败：' + formatValidationError(error));
+    }
   }
 
   async function importJson(raw: string) {
@@ -69,7 +114,10 @@ export function NewProjectPage() {
         <label className="full-field"><span>设备说明（可选）</span><input value={trip.equipment} onChange={(e) => setTrip({ ...trip, equipment: e.target.value })} placeholder="例如：手机横屏；不填也可以" /></label>
         <label className="full-field"><span>重点想拍什么</span><input value={trip.contentFocus} onChange={(e) => setTrip({ ...trip, contentFocus: e.target.value })} placeholder="例如：海边、建筑、列车、环境声" /></label>
         <label className="full-field"><span>不要出现什么</span><input value={trip.avoidContent} onChange={(e) => setTrip({ ...trip, avoidContent: e.target.value })} placeholder="例如：美食、购物、陌生人特写" /></label>
-        <button className="primary-link full-field" type="submit"><FileJson aria-hidden="true" />生成并显示完整提示词</button>
+        <div className="new-project-actions full-field">
+          <button className="primary-link" type="submit"><FileJson aria-hidden="true" />生成完整计划提示词</button>
+          <button className="action-button" type="button" onClick={() => void createBlankRecord()}><Plus aria-hidden="true" />快速创建空白旅行记录</button>
+        </div>
       </form>
 
       {prompt && (

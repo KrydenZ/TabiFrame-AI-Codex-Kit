@@ -25,6 +25,7 @@ ${JSON.stringify(input, null, 2)}
 6. 输出用于策划账本，不代表用户实际拍摄过任何视频。
 7. 严格遵守 contentFocus 和 avoidContent；除非用户明确要求，不要自动加入美食、购物、网红打卡或室内消费场景。
 8. 镜头数量必须在给定时间内实际可完成，优先少而清楚，不为凑数量重复同类镜头。
+9. 每个路线分段优先提供 1 张确有来源、作者和许可证的 HTTPS 参考照片；无法可靠核实时该分段 referenceImages 留空，绝不能编造链接或署名。
 
 JSON 必须严格符合：
 {
@@ -44,6 +45,9 @@ JSON 必须严格符合：
   "targetVideoMinutes": ${input.targetVideoMinutes},
   "stylePresetId": "japan-solo-walk",
   "sourceKind": "imported",
+  "travelState": "planned",
+  "travelReflection": "",
+  "tags": ["地点或主题标签"],
   "notes": ["策划说明"],
   "editingTimeline": [["00:00–00:40", "章节内容"]],
   "sections": [{

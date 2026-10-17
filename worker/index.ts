@@ -7,6 +7,7 @@ interface Env {
 interface ProjectPayload {
   project: VlogProject;
   completedShotIds: string[];
+  expectedUpdatedAt?: string;
 }
 
 class InputError extends Error {}
@@ -40,10 +41,13 @@ async function readPayload(request: Request): Promise<ProjectPayload> {
   if (Number.isFinite(length) && length > 2_000_000) throw new InputError('项目数据不能超过 2 MB。');
   const raw = await request.text();
   if (raw.length > 2_000_000) throw new InputError('项目数据不能超过 2 MB。');
-  const input = JSON.parse(raw) as { project?: unknown; completedShotIds?: unknown };
+  const input = JSON.parse(raw) as { project?: unknown; completedShotIds?: unknown; expectedUpdatedAt?: unknown };
   const project = vlogProjectSchema.parse(input.project);
   const completedShotIds = parseCompletedShotIds(project, input.completedShotIds ?? []);
-  return { project, completedShotIds };
+  if (input.expectedUpdatedAt !== undefined && typeof input.expectedUpdatedAt !== 'string') {
+    throw new InputError('expectedUpdatedAt 必须是时间字符串。');
+  }
+  return { project, completedShotIds, expectedUpdatedAt: input.expectedUpdatedAt };
 }
 
 function parseCompletedShotIds(project: VlogProject, input: unknown): string[] {
@@ -65,6 +69,18 @@ async function readProgressPayload(request: Request, project: VlogProject): Prom
   return parseCompletedShotIds(project, input.completedShotIds ?? []);
 }
 
+async function readProgressPatch(request: Request, project: VlogProject): Promise<{ shotId: string; completed: boolean }> {
+  const length = Number(request.headers.get('content-length') ?? 0);
+  if (Number.isFinite(length) && length > 20_000) throw new InputError('进度数据不能超过 20 KB。');
+  const input = await request.json() as { shotId?: unknown; completed?: unknown };
+  if (typeof input.shotId !== 'string' || typeof input.completed !== 'boolean') {
+    throw new InputError('单个进度更新必须包含 shotId 和 completed。');
+  }
+  const known = new Set(project.sections.flatMap((section) => section.shots.map((shot) => shot.id)));
+  if (!known.has(input.shotId)) throw new InputError('镜头不属于当前项目。');
+  return { shotId: input.shotId, completed: input.completed };
+}
+
 async function readProject(env: Env, userId: string, projectId: string): Promise<VlogProject | null> {
   const row = await env.DB.prepare(
     'SELECT project_json FROM projects WHERE user_id = ?1 AND project_id = ?2',
@@ -84,12 +100,20 @@ async function replaceProgress(env: Env, userId: string, projectId: string, comp
 }
 
 async function saveProject(env: Env, userId: string, payload: ProjectPayload, createOnly: boolean): Promise<Response> {
-  const { project, completedShotIds } = payload;
+  const { project, completedShotIds, expectedUpdatedAt } = payload;
   if (createOnly) {
     const exists = await env.DB.prepare(
       'SELECT 1 AS found FROM projects WHERE user_id = ?1 AND project_id = ?2',
     ).bind(userId, project.projectId).first();
     if (exists) return json({ error: '项目 ID 已存在。' }, 409);
+  } else {
+    const existing = await env.DB.prepare(
+      'SELECT updated_at FROM projects WHERE user_id = ?1 AND project_id = ?2',
+    ).bind(userId, project.projectId).first<{ updated_at: string }>();
+    if (!existing) return json({ error: '项目不存在，请返回列表刷新后重试。' }, 404);
+    if (expectedUpdatedAt && existing.updated_at !== expectedUpdatedAt) {
+      return json({ error: '这个项目已在另一台设备更新。请刷新后确认最新内容，再重新修改。' }, 409);
+    }
   }
 
   const now = new Date().toISOString();
@@ -185,6 +209,29 @@ async function routeApi(request: Request, env: Env): Promise<Response> {
       const completedShotIds = await readProgressPayload(request, project);
       await replaceProgress(env, user, projectId, completedShotIds);
       return json({ completedShotIds });
+    }
+
+    if (segments.length === 4 && segments[3] === 'progress' && request.method === 'PATCH') {
+      if (!mutationAllowed(request)) return json({ error: '拒绝跨站或非 JSON 写入。' }, 403);
+      const project = await readProject(env, user, projectId);
+      if (!project) return json({ error: '项目不存在。' }, 404);
+      const { shotId, completed } = await readProgressPatch(request, project);
+      const now = new Date().toISOString();
+      if (completed) {
+        await env.DB.prepare(`
+          INSERT INTO shot_progress (user_id, project_id, shot_id, completed_at, updated_at)
+          VALUES (?1, ?2, ?3, ?4, ?4)
+          ON CONFLICT(user_id, project_id, shot_id) DO UPDATE SET updated_at = excluded.updated_at
+        `).bind(user, projectId, shotId, now).run();
+      } else {
+        await env.DB.prepare(
+          'DELETE FROM shot_progress WHERE user_id = ?1 AND project_id = ?2 AND shot_id = ?3',
+        ).bind(user, projectId, shotId).run();
+      }
+      const rows = await env.DB.prepare(
+        'SELECT shot_id FROM shot_progress WHERE user_id = ?1 AND project_id = ?2 ORDER BY shot_id',
+      ).bind(user, projectId).all<{ shot_id: string }>();
+      return json({ completedShotIds: rows.results.map((row) => row.shot_id) });
     }
   }
 

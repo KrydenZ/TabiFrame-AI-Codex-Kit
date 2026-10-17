@@ -101,7 +101,15 @@
           "completed": false
         }
       ],
-      "referenceImages": []
+      "referenceImages": [
+        {
+          "caption": "空港第 2 航站楼车站：参考出发交通画面",
+          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/View%20of%20platform%20of%20Narita%20Airport%20Terminal%202%EF%BD%A53%20Station%20%28Keisei%29%20from%20platform%20of%20JR.JPG?width=960",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:View_of_platform_of_Narita_Airport_Terminal_2%EF%BD%A53_Station_%28Keisei%29_from_platform_of_JR.JPG",
+          "author": "そらみみ（Soramimi）",
+          "license": "CC BY-SA 4.0"
+        }
+      ]
     },
     {
       "id": "omotesando",
@@ -197,13 +205,6 @@
           "caption": "表参道传统街道：参考远景构图",
           "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Omotesando%20to%20Naritasan%20Shinshoji%20Temple%20%40%20Narita%20%2815262961661%29.jpg?width=960",
           "sourceUrl": "https://commons.wikimedia.org/wiki/File:Omotesando_to_Naritasan_Shinshoji_Temple_%40_Narita_%2815262961661%29.jpg",
-          "author": "Guilhem Vellut",
-          "license": "CC BY 2.0"
-        },
-        {
-          "caption": "老街局部：参考建筑和店面中景",
-          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Omotesando%20to%20Naritasan%20Shinshoji%20Temple%20%40%20Narita%20%2815079298329%29.jpg?width=960",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Omotesando_to_Naritasan_Shinshoji_Temple_%40_Narita_%2815079298329%29.jpg",
           "author": "Guilhem Vellut",
           "license": "CC BY 2.0"
         }
@@ -305,13 +306,6 @@
           "sourceUrl": "https://commons.wikimedia.org/wiki/File:Naritasan-Shinshoji-Somon.jpg",
           "author": "Joel Bradshaw",
           "license": "CC0"
-        },
-        {
-          "caption": "三重塔：参考结构与装饰特写",
-          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Three%20story%20pagoda%2C%20Naritasan%20Shinshoji%20Temple.JPG?width=960",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Three_story_pagoda%2C_Naritasan_Shinshoji_Temple.JPG",
-          "author": "John Hill",
-          "license": "CC BY-SA 3.0"
         }
       ]
     },
@@ -467,7 +461,15 @@
           "completed": false
         }
       ],
-      "referenceImages": []
+      "referenceImages": [
+        {
+          "caption": "京成成田站站台：参考返程与自然收尾",
+          "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Keisei-Narita-STA%20Platforms.jpg?width=960",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Keisei-Narita-STA_Platforms.jpg",
+          "author": "MaedaAkihiko",
+          "license": "CC0"
+        }
+      ]
     }
   ]
 }

@@ -41,7 +41,7 @@ export function ReferenceGallery({ images }: ReferenceGalleryProps) {
 
   return (
     <div className="gallery-wrap">
-      <div className="gallery-label"><WifiOff aria-hidden="true" />参考图需要联网</div>
+      <div className="gallery-label"><WifiOff aria-hidden="true" />本步骤参考图 · 需要联网</div>
       <div className="reference-gallery" aria-label="现场机位参考图">
         {images.map((image) => <ReferenceCard key={image.sourceUrl} image={image} />)}
       </div>

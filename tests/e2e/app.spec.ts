@@ -32,23 +32,35 @@ test.beforeEach(async ({ page }) => {
   await page.reload();
 });
 
-test('project search, edit and delete operate on remote projects', async ({ page }) => {
-  await page.getByPlaceholder('按项目名、目的地、日期查询').fill('成田山');
+test('project search, edit and delete operate on remote projects', async ({ page }, testInfo) => {
+  await page.getByPlaceholder('查询项目、地点、标签、步骤或镜头').fill('成田山');
   await expect(page.locator('.project-card')).toHaveCount(1);
   await page.getByRole('link', { name: '修改' }).click();
   await page.getByLabel('项目名称 *').fill('成田远程验收项目');
-  await page.getByRole('button', { name: '保存项目资料' }).click();
-  await expect(page.getByRole('status')).toContainText('项目资料已保存到远程账户');
+  await page.getByLabel('旅行状态').selectOption('visited');
+  await page.getByLabel('标签').fill('千叶、寺庙散步');
+  await page.getByLabel('旅行回顾').fill('最喜欢公园水边这一段，剪辑时多留环境声。');
+  await page.getByRole('button', { name: '下移机场 → 京成成田站' }).click();
+  await expect(page.locator('.route-step-editor').first()).toContainText('成田山表参道');
+  if (testInfo.project.name === 'mobile-chrome-360') {
+    await page.screenshot({ path: testInfo.outputPath('v2-mobile-route-editor.png'), fullPage: true });
+  }
+  await page.getByRole('button', { name: '保存全部修改' }).click();
+  await expect(page.getByRole('status')).toContainText('旅行记录和路线编排已保存到远程账户');
   await page.getByRole('link', { name: '所有项目' }).click();
-  await expect(page.getByRole('heading', { name: '旅行项目' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '旅行记录' })).toBeVisible();
   await expect(page.locator('.project-card h3', { hasText: '成田远程验收项目' })).toBeVisible();
+  await expect(page.getByText('已走过').first()).toBeVisible();
   await page.reload();
   await expect(page.locator('.project-card h3', { hasText: '成田远程验收项目' })).toBeVisible();
 
+  await page.getByPlaceholder('查询项目、地点、标签、步骤或镜头').fill('寺庙散步');
+  await expect(page.locator('.project-card')).toHaveCount(1);
+
   await page.getByRole('link', { name: '修改' }).first().click();
   await page.getByLabel('项目名称 *').fill('一个人在日本散步 / 成田篇');
-  await page.getByRole('button', { name: '保存项目资料' }).click();
-  await expect(page.getByRole('status')).toContainText('项目资料已保存到远程账户');
+  await page.getByRole('button', { name: '保存全部修改' }).click();
+  await expect(page.getByRole('status')).toContainText('旅行记录和路线编排已保存到远程账户');
   await page.getByRole('link', { name: '所有项目' }).click();
 
   await page.evaluate(async (project) => {
@@ -79,6 +91,12 @@ test('multi-project shooting progress persists without mobile overflow', async (
   await expect(page.getByRole('heading', { name: '一个人在日本散步 / 成田篇' })).toBeVisible();
   await expect(page.getByRole('checkbox')).toHaveCount(38);
   await expect(page.locator('figure.reference-card')).toHaveCount(5);
+  await expect(page.locator('.shooting-section')).toHaveCount(5);
+  await expect(page.locator('.shooting-section figure.reference-card')).toHaveCount(5);
+
+  await page.getByPlaceholder('查询镜头名称、拍法或步骤').fill('三重塔');
+  await expect(page.getByRole('checkbox')).toHaveCount(2);
+  await page.getByPlaceholder('查询镜头名称、拍法或步骤').clear();
 
   await page.getByRole('checkbox', { name: '10 ★ 仲町下坡' }).check();
   await expect(page.getByTestId('progress-count')).toContainText('1 / 38组完成 · 3 / 67条');
@@ -111,7 +129,7 @@ test('new project flow exposes honest external generation and JSON import', asyn
   await expect(page.getByLabel('不要出现什么')).toHaveValue('美食、购物、陌生人特写、需要预约的室内场所');
   await page.getByLabel('目的地 *').fill('箱根');
   await page.getByLabel('日期或季节 *').fill('深秋');
-  await page.getByRole('button', { name: '生成并显示完整提示词' }).click();
+  await page.getByRole('button', { name: '生成完整计划提示词' }).click();
   await expect(page.getByLabel('结构化计划生成指令')).toContainText('箱根');
   await expect(page.getByLabel('结构化计划生成指令')).toContainText('不要自动加入美食');
   if (testInfo.project.name === 'mobile-chrome-360') {
@@ -122,6 +140,26 @@ test('new project flow exposes honest external generation and JSON import', asyn
   await expect(page.getByRole('status')).toContainText('无法导入');
   await page.getByRole('link', { name: '返回项目列表' }).click();
   await expect(page.locator('.project-card')).toHaveCount(2);
+});
+
+test('past trips can be created and organized without AI or JSON', async ({ page }) => {
+  await page.getByRole('link', { name: '新建旅行计划' }).click();
+  await page.getByLabel('目的地 *').fill('北海道');
+  await page.getByLabel('日期或季节 *').fill('2025-02-12');
+  await page.getByRole('button', { name: '快速创建空白旅行记录' }).click();
+
+  await expect(page.getByRole('heading', { name: '修改与编排' })).toBeVisible();
+  await page.getByLabel('旅行状态').selectOption('visited');
+  await page.getByLabel('标签').fill('北海道、冬天、电车');
+  await page.getByLabel('旅行回顾').fill('已经拍完，接下来按实际行程整理剪辑。');
+  await page.getByRole('button', { name: '新增路线步骤' }).click();
+  await expect(page.locator('.route-step-editor')).toHaveCount(2);
+  await page.locator('.route-step-editor').nth(1).getByLabel('步骤名称').fill('第二段雪景散步');
+  await page.getByRole('button', { name: '保存全部修改' }).click();
+
+  await expect(page.getByRole('heading', { name: '北海道旅行记录' })).toBeVisible();
+  await expect(page.locator('.journey-memory p')).toHaveText('已经拍完，接下来按实际行程整理剪辑。');
+  await expect(page.locator('.route-index-scroll a')).toHaveCount(2);
 });
 
 test('valid plan import, editing summary, export and collision-safe restore form one complete flow', async ({ page }, testInfo) => {

@@ -40,7 +40,9 @@
         {"id":"mm-03","title":"新高岛的街区尺度","description":"拍宽街、楼体间距或高架结构，两条都使用固定机位","clipCount":2,"recordSeconds":15,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"},
         {"id":"mm-04","title":"新高岛站名","description":"从不挡路的位置拍站名或入口，作为沿线位置标记","clipCount":1,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"medium","movement":"static"}
       ],
-      "referenceImages": [],
+      "referenceImages": [
+        {"caption":"横滨站东口：参考出发地点与人流构图","url":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Yokohama%20Station-East%20exit.jpg?width=960","sourceUrl":"https://commons.wikimedia.org/wiki/File:Yokohama_Station-East_exit.jpg","author":"Yoh-Plus","license":"Public domain"}
+      ],
       "factChecks": [
         {"text":"港未来线依次设横滨、新高岛、港未来、马车道、日本大通、元町·中华街 6 站，全长约 4.1 km。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/info/news/uploads/press%20release_20231006.pdf","checkedAt":"2026-10-16T12:40:00.000Z"}
       ]
@@ -58,7 +60,9 @@
         {"id":"mm-08","title":"公共空间细节","description":"从栏杆、路面线条、倒影或树影中选一个细节","clipCount":1,"recordSeconds":10,"priority":"normal","completed":false,"shotSize":"detail","movement":"static"},
         {"id":"mm-09","title":"沿海继续走","description":"一条向前慢走，一条让自己或路人从远处自然经过；避开人脸特写","clipCount":2,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"wide","movement":"walk"}
       ],
-      "referenceImages": [],
+      "referenceImages": [
+        {"caption":"港未来临海天际线：参考城市与水面同框","url":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Minato%20Mirai%2021%20views%20from%20Sea%20Bass%20055.jpg?width=960","sourceUrl":"https://commons.wikimedia.org/wiki/File:Minato_Mirai_21_views_from_Sea_Bass_055.jpg","author":"Dandy1022","license":"CC BY-SA 4.0"}
+      ],
       "factChecks": [
         {"text":"港未来站位于港未来 21 中央地区，周边集中分布文化、会展和商业设施。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/station/minatomirai/index.html","checkedAt":"2026-10-16T12:40:00.000Z"}
       ]
@@ -75,7 +79,9 @@
         {"id":"mm-12","title":"街灯与道路纵深","description":"用街灯做前景拍道路延伸，再换一处安全位置补一条","clipCount":2,"recordSeconds":12,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"},
         {"id":"mm-13","title":"马车道环境声","description":"固定收 25 秒脚步、车声和城市底噪，拍摄时不说话","clipCount":1,"recordSeconds":25,"priority":"normal","completed":false,"shotSize":"wide","movement":"static"}
       ],
-      "referenceImages": [],
+      "referenceImages": [
+        {"caption":"横滨历史建筑：参考砖石立面与垂直线","url":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Yokohama%20Port%20Opening%20Memorial%20Hall.jpg?width=960","sourceUrl":"https://commons.wikimedia.org/wiki/File:Yokohama_Port_Opening_Memorial_Hall.jpg","author":"Ymblanter","license":"CC BY-SA 4.0"}
+      ],
       "factChecks": []
     },
     {
@@ -91,7 +97,9 @@
         {"id":"mm-17","title":"山下公园与港口","description":"水面远景一条、船或港口设施一条；没有船也不等待追拍","clipCount":2,"recordSeconds":18,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
         {"id":"mm-18","title":"海风环境声","description":"找安全位置固定收 30 秒风、水和远处港口声音","clipCount":1,"recordSeconds":30,"priority":"must","completed":false,"shotSize":"wide","movement":"static"}
       ],
-      "referenceImages": [],
+      "referenceImages": [
+        {"caption":"山下公园与港口：参考水岸远景构图","url":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Yamashita%20Park%2C%20Yokohama%2C%20Kanagawa%20Prefecture%2C%20Japan%20-%20panoramio%20%281%29.jpg?width=960","sourceUrl":"https://commons.wikimedia.org/wiki/File:Yamashita_Park%2C_Yokohama%2C_Kanagawa_Prefecture%2C_Japan_-_panoramio_%281%29.jpg","author":"Yoshio Kohara","license":"CC BY 3.0"}
+      ],
       "factChecks": [
         {"text":"日本大通站周边分布多座横滨开港相关历史建筑。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/station/nihonodori/","checkedAt":"2026-10-16T12:40:00.000Z"}
       ]
@@ -108,7 +116,9 @@
         {"id":"mm-21","title":"回看港口方向","description":"在公共区域固定拍最后一条海边或天际线，不必寻找新景点","clipCount":1,"recordSeconds":18,"priority":"must","completed":false,"shotSize":"wide","movement":"static"},
         {"id":"mm-22","title":"返程收尾","description":"拍站外入口、离开的脚步或回程车窗三选一，留足 15 秒","clipCount":1,"recordSeconds":15,"priority":"must","completed":false,"shotSize":"wide","movement":"static"}
       ],
-      "referenceImages": [],
+      "referenceImages": [
+        {"caption":"中华街东门：参考街口与返程前的地点标记","url":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Chinatown%20in%20Yokohama%2001.jpg?width=960","sourceUrl":"https://commons.wikimedia.org/wiki/File:Chinatown_in_Yokohama_01.jpg","author":"Aimaimyi","license":"CC BY-SA 3.0"}
+      ],
       "factChecks": [
         {"text":"元町·中华街站周边连接元町、中华街、山下公园及港之见丘等区域。","status":"verified","sourceUrl":"https://www.mm21railway.co.jp/station/motomachi/","checkedAt":"2026-10-16T12:40:00.000Z"}
       ]
