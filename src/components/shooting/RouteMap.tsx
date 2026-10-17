@@ -1,5 +1,6 @@
-import { ExternalLink, Footprints, MapPinned, TrainFront, WifiOff } from 'lucide-react';
+import { ExternalLink, Footprints, Map as MapIcon, MapPinned, TrainFront } from 'lucide-react';
 import type { RouteMap as RouteMapData } from '../../domain/schemas/project';
+import { scrollToSection } from '../../lib/scrollToSection';
 
 const TILE_SIZE = 256;
 const MAP_ASPECT = 16 / 9;
@@ -41,12 +42,15 @@ function buildScene(routeMap: RouteMapData) {
   const x = (minX + maxX - width) / 2;
   const y = (minY + maxY - height) / 2;
   const tiles = [];
-  const limit = 2 ** routeMap.zoom;
-  for (let tileY = Math.floor(y / TILE_SIZE); tileY <= Math.floor((y + height) / TILE_SIZE); tileY += 1) {
+  const tileZoom = Math.min(routeMap.zoom + 1, 18);
+  const density = 2 ** (tileZoom - routeMap.zoom);
+  const tileDisplaySize = TILE_SIZE / density;
+  const limit = 2 ** tileZoom;
+  for (let tileY = Math.floor(y / tileDisplaySize); tileY <= Math.floor((y + height) / tileDisplaySize); tileY += 1) {
     if (tileY < 0 || tileY >= limit) continue;
-    for (let tileX = Math.floor(x / TILE_SIZE); tileX <= Math.floor((x + width) / TILE_SIZE); tileX += 1) {
+    for (let tileX = Math.floor(x / tileDisplaySize); tileX <= Math.floor((x + width) / tileDisplaySize); tileX += 1) {
       const wrappedX = ((tileX % limit) + limit) % limit;
-      tiles.push({ tileX, tileY, url: `https://tile.openstreetmap.org/${routeMap.zoom}/${wrappedX}/${tileY}.png` });
+      tiles.push({ tileX, tileY, size: tileDisplaySize, url: `https://tile.openstreetmap.org/${tileZoom}/${wrappedX}/${tileY}.png` });
     }
   }
   return {
@@ -66,25 +70,19 @@ export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
     <section className="route-map-card" aria-labelledby="route-map-title">
       <header className="route-map-heading">
         <div className="route-map-title"><MapPinned aria-hidden="true" /><div><span>ROUTE MAP</span><h2 id="route-map-title">{routeMap.title}</h2></div></div>
-        <a href={openMapUrl} target="_blank" rel="noopener noreferrer">打开地图 <ExternalLink aria-hidden="true" /></a>
+        <a href={openMapUrl} target="_blank" rel="noopener noreferrer">在 OpenStreetMap 打开 <ExternalLink aria-hidden="true" /></a>
       </header>
       <p>{routeMap.summary}</p>
       <div className="route-map-canvas">
         <svg viewBox={scene.viewBox} role="img" aria-label={`${routeMap.title}，共 ${routeMap.stops.length} 个主要地点`} preserveAspectRatio="xMidYMid slice">
           <title>{routeMap.title}</title>
           <rect className="route-map-base" x="-100000" y="-100000" width="200000" height="200000" />
-          {scene.tiles.map((tile) => <image key={`${tile.tileX}-${tile.tileY}`} href={tile.url} x={tile.tileX * TILE_SIZE} y={tile.tileY * TILE_SIZE} width={TILE_SIZE} height={TILE_SIZE} />)}
+          {scene.tiles.map((tile) => <image key={`${tile.tileX}-${tile.tileY}`} href={tile.url} x={tile.tileX * tile.size} y={tile.tileY * tile.size} width={tile.size} height={tile.size} preserveAspectRatio="none" />)}
           {scene.points.slice(0, -1).map((point, index) => {
             const next = scene.points[index + 1];
             const mode = point.stop.modeToNext ?? 'walk';
             return <g key={`segment-${point.stop.id}`}><line className="route-map-path-halo" vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={next.x} y2={next.y} /><line className={`route-map-path route-map-path-${mode}`} vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={next.x} y2={next.y} /></g>;
           })}
-          {scene.points.map((point, index) => (
-            <g key={point.stop.id}>
-              {(point.markerX !== point.x || point.markerY !== point.y) && <line className="route-map-leader" vectorEffect="non-scaling-stroke" x1={point.x} y1={point.y} x2={point.markerX} y2={point.markerY} />}
-              <circle className="route-map-anchor" vectorEffect="non-scaling-stroke" cx={point.x} cy={point.y} r="2.5" />
-            </g>
-          ))}
         </svg>
         <div className="route-map-markers">
           {scene.points.map((point, index) => {
@@ -94,18 +92,18 @@ export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
             };
             const label = `${index + 1} · ${point.stop.label}`;
             return point.stop.sectionId
-              ? <a key={point.stop.id} className="route-map-marker-button" href={`#${point.stop.sectionId}`} style={style} aria-label={label} title={label}><span>{index + 1}</span></a>
+              ? <button key={point.stop.id} type="button" className="route-map-marker-button" onClick={() => scrollToSection(point.stop.sectionId!)} style={style} aria-label={`查看${label}`} title={label}><span>{index + 1}</span></button>
               : <span key={point.stop.id} className="route-map-marker-button" style={style} aria-label={label} title={label}><span>{index + 1}</span></span>;
           })}
         </div>
         <div className="route-map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a></div>
       </div>
-      <div className="route-map-legend"><span><TrainFront aria-hidden="true" />轨道交通</span><span><Footprints aria-hidden="true" />步行</span><span><WifiOff aria-hidden="true" />底图需联网</span></div>
+      <div className="route-map-legend"><span><TrainFront aria-hidden="true" />轨道交通</span><span><Footprints aria-hidden="true" />步行</span><span><MapIcon aria-hidden="true" />OpenStreetMap 在线地图</span></div>
       <ol className="route-map-stops">
         {routeMap.stops.map((stop, index) => (
           <li key={stop.id}>
             <span>{index + 1}</span>
-            <div>{stop.sectionId ? <a href={`#${stop.sectionId}`}>{stop.label}</a> : <strong>{stop.label}</strong>}{stop.detail && <small>{stop.detail}</small>}</div>
+            <div>{stop.sectionId ? <button type="button" onClick={() => scrollToSection(stop.sectionId!)}>{stop.label}</button> : <strong>{stop.label}</strong>}{stop.detail && <small>{stop.detail}</small>}</div>
           </li>
         ))}
       </ol>

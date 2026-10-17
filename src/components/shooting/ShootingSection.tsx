@@ -19,7 +19,7 @@ export function ShootingSection({
   onToggle,
 }: ShootingSectionProps) {
   return (
-    <section className="shooting-section" id={section.id}>
+    <section className="shooting-section" id={section.id} tabIndex={-1}>
       <header className="section-heading">
         <div className="section-step">STEP {String(stepNumber).padStart(2, '0')}</div>
         <div className="section-time">{section.time}</div>

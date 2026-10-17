@@ -100,6 +100,27 @@ test('multi-project shooting progress persists without mobile overflow', async (
   const firstMapMarker = await page.locator('.route-map-marker-button').first().boundingBox();
   expect(firstMapMarker?.width).toBeLessThanOrEqual(18);
   expect(firstMapMarker?.height).toBeLessThanOrEqual(18);
+  await expect(page.getByText('OpenStreetMap 在线地图')).toBeVisible();
+  await expect(page.locator('.route-map-leader')).toHaveCount(0);
+  await expect(page.locator('.route-map-canvas image').first()).toHaveAttribute('href', /tile\.openstreetmap\.org\/13\//);
+
+  const shootingUrl = page.url();
+  const stopSectionIds = ['airport', 'airport', 'omotesando', 'shinji', 'park'];
+  const mapMarkers = page.locator('.route-map-marker-button');
+  for (const [index, sectionId] of stopSectionIds.entries()) {
+    await mapMarkers.nth(index).click();
+    await expect(page.locator(`#${sectionId}`)).toBeFocused();
+    expect(page.url()).toBe(shootingUrl);
+  }
+  const stopButtons = page.locator('.route-map-stops button');
+  for (const [index, sectionId] of stopSectionIds.entries()) {
+    await stopButtons.nth(index).click();
+    await expect(page.locator(`#${sectionId}`)).toBeFocused();
+    expect(page.url()).toBe(shootingUrl);
+  }
+  await page.locator('.route-index-scroll button').nth(3).click();
+  await expect(page.locator('#park')).toBeFocused();
+  expect(page.url()).toBe(shootingUrl);
 
   await page.getByPlaceholder('查询镜头名称、拍法或步骤').fill('三重塔');
   await expect(page.getByRole('checkbox')).toHaveCount(2);
@@ -166,7 +187,7 @@ test('past trips can be created and organized without AI or JSON', async ({ page
 
   await expect(page.getByRole('heading', { name: '北海道旅行记录' })).toBeVisible();
   await expect(page.locator('.journey-memory p')).toHaveText('已经拍完，接下来按实际行程整理剪辑。');
-  await expect(page.locator('.route-index-scroll a')).toHaveCount(2);
+  await expect(page.locator('.route-index-scroll button')).toHaveCount(2);
 });
 
 test('valid plan import, editing summary, export and collision-safe restore form one complete flow', async ({ page }, testInfo) => {

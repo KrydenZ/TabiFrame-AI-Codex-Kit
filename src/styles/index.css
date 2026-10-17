@@ -2188,7 +2188,7 @@ a,
 }
 
 .route-map-canvas image {
-  opacity: 0.92;
+  opacity: 1;
 }
 
 .route-map-path-halo,
@@ -2212,19 +2212,6 @@ a,
 
 .route-map-path-walk {
   stroke: #426f51;
-  stroke-dasharray: 4 10;
-}
-
-.route-map-leader {
-  stroke: #526b5c;
-  stroke-width: 1.25;
-  stroke-dasharray: 2 4;
-}
-
-.route-map-anchor {
-  fill: #223a2e;
-  stroke: rgba(255, 255, 255, 0.96);
-  stroke-width: 1.5;
 }
 
 .route-map-markers {
@@ -2241,17 +2228,23 @@ a,
   box-sizing: border-box;
   width: 18px;
   height: 18px;
+  padding: 0;
   border: 1.5px solid #223a2e;
   border-radius: 50%;
   background: rgba(255, 254, 250, 0.96);
   box-shadow: 0 1px 4px rgba(18, 36, 28, 0.24);
   color: #223a2e;
+  font-family: inherit;
   font-size: 8px;
   font-weight: 900;
   line-height: 1;
   text-decoration: none;
   transform: translate(-50%, -50%);
   pointer-events: auto;
+}
+
+button.route-map-marker-button {
+  cursor: pointer;
 }
 
 .route-map-marker-button:is(:hover, :focus-visible) {
@@ -2338,12 +2331,22 @@ a,
   flex-direction: column;
 }
 
-.route-map-stops a,
+.route-map-stops button,
 .route-map-stops strong {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--ink-900);
+  font-family: inherit;
   font-size: 13px;
   font-weight: 850;
   overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.route-map-stops button {
+  cursor: pointer;
 }
 
 .route-map-stops small {
@@ -2400,7 +2403,7 @@ a,
   scrollbar-width: thin;
 }
 
-.route-index-scroll a {
+.route-index-scroll button {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2411,13 +2414,15 @@ a,
   border-radius: 10px;
   background: #f6f8f4;
   color: var(--ink-700);
+  cursor: pointer;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 800;
   text-decoration: none;
   scroll-snap-align: start;
 }
 
-.route-index-scroll a span {
+.route-index-scroll button span {
   color: #6a7f70;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
@@ -2503,7 +2508,7 @@ a,
 .text-button:focus-visible,
 .move-buttons button:focus-visible,
 .shot-filter-row button:focus-visible,
-.route-index-scroll a:focus-visible,
+.route-index-scroll button:focus-visible,
 .filter-row select:focus-visible,
 .trip-form select:focus-visible,
 .trip-form textarea:focus-visible,

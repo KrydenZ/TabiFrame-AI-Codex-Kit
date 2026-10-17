@@ -10,6 +10,7 @@ import { RouteMap } from '../components/shooting/RouteMap';
 import { calculateProgress } from '../domain/progress';
 import { useProject } from '../hooks/useProject';
 import { useShotProgress } from '../hooks/useShotProgress';
+import { scrollToSection } from '../lib/scrollToSection';
 
 export function ShootingPage() {
   const { projectId } = useParams();
@@ -78,7 +79,7 @@ export function ShootingPage() {
 
       <nav className="route-index" aria-label="路线步骤导航">
         <div className="route-index-title"><MapPinned aria-hidden="true" /><div><strong>路线步骤</strong><span>按步骤查看参考图与镜头</span></div></div>
-        <div className="route-index-scroll">{project.sections.map((section, index) => <a key={section.id} href={`#${section.id}`}><span>{String(index + 1).padStart(2, '0')}</span>{section.title}</a>)}</div>
+        <div className="route-index-scroll">{project.sections.map((section, index) => <button key={section.id} type="button" onClick={() => scrollToSection(section.id)}><span>{String(index + 1).padStart(2, '0')}</span>{section.title}</button>)}</div>
       </nav>
 
       <section className="shot-tools" aria-label="查询和筛选计划镜头">
