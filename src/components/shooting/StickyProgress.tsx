@@ -6,6 +6,7 @@ interface StickyProgressProps {
   totals: ShootingTotals;
   saveState: SaveState;
   errorMessage: string | null;
+  isVisited?: boolean;
 }
 
 const saveMessages: Record<SaveState, string> = {
@@ -16,7 +17,7 @@ const saveMessages: Record<SaveState, string> = {
   error: '远程保存不可用，请检查网络后重试',
 };
 
-export function StickyProgress({ totals, saveState, errorMessage }: StickyProgressProps) {
+export function StickyProgress({ totals, saveState, errorMessage, isVisited = false }: StickyProgressProps) {
   const SaveIcon = saveState === 'error'
     ? AlertTriangle
     : saveState === 'saving' || saveState === 'loading'
@@ -26,9 +27,9 @@ export function StickyProgress({ totals, saveState, errorMessage }: StickyProgre
         : Database;
 
   return (
-    <section className="sticky-progress" aria-label="拍摄计划进度">
+    <section className="sticky-progress" aria-label={isVisited ? '旅行记录整理进度' : '拍摄计划进度'}>
       <div className="progress-heading" aria-live="polite">
-        <span>拍摄计划进度</span>
+        <span>{isVisited ? '手动整理进度' : '拍摄计划进度'}</span>
         <strong data-testid="progress-count">
           {totals.completedGroups} / {totals.totalGroups}组完成 · {totals.completedClips} / {totals.totalClips}条
         </strong>

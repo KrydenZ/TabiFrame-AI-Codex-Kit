@@ -205,8 +205,8 @@ export function ProjectListPage() {
                 {project.travelReflection && <p className="memory-preview">{project.travelReflection}</p>}
                 <div className="project-progress" aria-label={`${totals.completedGroups}组已完成`}><span style={{ width: `${totals.percentage}%` }} /></div>
                 <div className="project-card-footer">
-                  <span>{totals.completedGroups}/{totals.totalGroups} 组 · {totals.completedClips}/{totals.totalClips} 条计划素材</span>
-                  <Link className="open-project-button" to={`/projects/${project.projectId}/shooting`} aria-label={`打开${project.title}`}><FolderOpen aria-hidden="true" />打开<ArrowRight aria-hidden="true" /></Link>
+                  <span>{project.travelState === 'visited' ? '已勾选 ' : ''}{totals.completedGroups}/{totals.totalGroups} 组 · {totals.completedClips}/{totals.totalClips} 条计划素材</span>
+                  <Link className="open-project-button" to={`/projects/${project.projectId}/shooting`} aria-label={`${project.travelState === 'visited' ? '查看记录' : '打开计划'}${project.title}`}><FolderOpen aria-hidden="true" />{project.travelState === 'visited' ? '查看记录' : '打开计划'}<ArrowRight aria-hidden="true" /></Link>
                 </div>
                 <div className="project-card-actions">
                   <Link className="action-button" to={`/projects/${project.projectId}/edit`}><Pencil aria-hidden="true" />修改与编排</Link>

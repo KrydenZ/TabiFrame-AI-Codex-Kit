@@ -194,7 +194,7 @@ export function EditProjectPage() {
 
   return (
     <main className="form-shell wide-form-shell">
-      <Link className="back-link" to={`/projects/${project.projectId}/shooting`}><ArrowLeft aria-hidden="true" />返回拍摄计划</Link>
+      <Link className="back-link" to={`/projects/${project.projectId}/shooting`}><ArrowLeft aria-hidden="true" />返回{project.travelState === 'visited' ? '旅行记录' : '拍摄计划'}</Link>
       <header className="form-header">
         <span className="brand-kicker">EDIT JOURNEY</span>
         <h1>修改与编排</h1>

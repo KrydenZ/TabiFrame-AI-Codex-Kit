@@ -27,6 +27,17 @@ afterEach(() => {
 });
 
 describe('ShootingPage progress', () => {
+  it('presents a visited project as a record without pre-trip reminders', async () => {
+    await db.projects.update('narita-2026-10-10', { travelState: 'visited' });
+    renderPage();
+
+    expect(await screen.findByText('手动整理进度')).toBeVisible();
+    expect(screen.getByRole('link', { name: '整理记录' })).toBeVisible();
+    expect(screen.getByRole('navigation', { name: '旅行步骤导航' })).toBeVisible();
+    expect(screen.getByText(/不代表实际轨迹或定位记录/)).toBeVisible();
+    expect(screen.queryByText('出发前需要自行核实')).not.toBeInTheDocument();
+  });
+
   it('renders the complete Narita plan and updates shot 10 progress', async () => {
     const user = userEvent.setup();
     renderPage();

@@ -62,7 +62,7 @@ function buildScene(routeMap: RouteMapData) {
   };
 }
 
-export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
+export function RouteMap({ routeMap, isVisited = false }: { routeMap: RouteMapData; isVisited?: boolean }) {
   const scene = buildScene(routeMap);
   const openMapUrl = `https://www.openstreetmap.org/#map=${routeMap.zoom}/${scene.center.lat}/${scene.center.lng}`;
 
@@ -102,7 +102,9 @@ export function RouteMap({ routeMap }: { routeMap: RouteMapData }) {
           </li>
         ))}
       </ol>
-      <p className="route-map-disclaimer">路线为拍摄策划示意，不提供实时导航、班次或现场通行保证；出发前请以当日交通和现场标识为准。</p>
+      <p className="route-map-disclaimer">{isVisited
+        ? '地图按项目资料标出主要地点，不代表实际轨迹或定位记录；可在“修改与编排”中按真实经历调整步骤。'
+        : '地图为拍摄策划示意，不提供实时导航、班次或现场通行保证；出发前请以当日交通和现场标识为准。'}</p>
     </section>
   );
 }

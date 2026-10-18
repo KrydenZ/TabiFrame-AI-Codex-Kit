@@ -32,6 +32,7 @@ export function ShootingPage() {
   }
 
   const totals = calculateProgress(project, progress.completedShotIds);
+  const isVisited = project.travelState === 'visited';
   const references = project.sections.flatMap((section) => section.referenceImages);
   const normalizedShotQuery = shotQuery.trim().toLocaleLowerCase('zh-CN');
   const visibleSections = project.sections.map((section) => ({
@@ -53,10 +54,10 @@ export function ShootingPage() {
 
   return (
     <main className="page-shell">
-      <nav className="shooting-nav"><Link className="back-link" to="/"><ArrowLeft aria-hidden="true" />所有项目</Link><Link className="back-link" to={`/projects/${project.projectId}/edit`}><Pencil aria-hidden="true" />修改资料</Link></nav>
+      <nav className="shooting-nav"><Link className="back-link" to="/"><ArrowLeft aria-hidden="true" />所有项目</Link><Link className="back-link" to={`/projects/${project.projectId}/edit`}><Pencil aria-hidden="true" />{isVisited ? '整理记录' : '修改计划'}</Link></nav>
       {importMessage && <p className="inline-message" role="status">{importMessage}</p>}
       <ShootingHero project={project} totalGroups={totals.totalGroups} totalClips={totals.totalClips} />
-      <StickyProgress totals={totals} saveState={progress.saveState} errorMessage={progress.errorMessage} />
+      <StickyProgress totals={totals} saveState={progress.saveState} errorMessage={progress.errorMessage} isVisited={isVisited} />
       <p className="count-explainer">“完成素材条数”只累计你手动勾选的计划组所包含的计划条数，不代表 App 检测、上传或核验了视频文件。</p>
       <ShootingBasics />
 
@@ -68,21 +69,21 @@ export function ShootingPage() {
         </section>
       )}
 
-      {project.needsVerification.length > 0 && (
+      {!isVisited && project.needsVerification.length > 0 && (
         <section className="verification-card">
           <AlertTriangle aria-hidden="true" />
           <div><strong>出发前需要自行核实</strong><p>{project.needsVerification.join('、')}</p></div>
         </section>
       )}
 
-      {project.routeMap && <RouteMap routeMap={project.routeMap} />}
+      {project.routeMap && <RouteMap routeMap={project.routeMap} isVisited={isVisited} />}
 
-      <nav className="route-index" aria-label="路线步骤导航">
-        <div className="route-index-title"><MapPinned aria-hidden="true" /><div><strong>路线步骤</strong><span>按步骤查看参考图与镜头</span></div></div>
+      <nav className="route-index" aria-label={isVisited ? '旅行步骤导航' : '路线步骤导航'}>
+        <div className="route-index-title"><MapPinned aria-hidden="true" /><div><strong>{isVisited ? '旅行步骤' : '路线步骤'}</strong><span>{isVisited ? '按真实经历整理参考图与镜头' : '按步骤查看参考图与镜头'}</span></div></div>
         <div className="route-index-scroll">{project.sections.map((section, index) => <button key={section.id} type="button" onClick={() => scrollToSection(section.id)}><span>{String(index + 1).padStart(2, '0')}</span>{section.title}</button>)}</div>
       </nav>
 
-      <section className="shot-tools" aria-label="查询和筛选计划镜头">
+      <section className="shot-tools" aria-label={isVisited ? '查询和筛选旅行记录镜头' : '查询和筛选计划镜头'}>
         <div className="shot-search"><Search aria-hidden="true" /><input aria-label="查询镜头" type="search" value={shotQuery} onChange={(event) => setShotQuery(event.target.value)} placeholder="查询镜头名称、拍法或步骤" />{shotQuery && <button className="clear-search" type="button" aria-label="清空镜头查询" onClick={() => setShotQuery('')}><X aria-hidden="true" /></button>}</div>
         <div className="shot-filter-row">
           {([['all', '全部'], ['pending', '未勾选'], ['completed', '已勾选'], ['must', '只看必拍']] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={shotFilter === value} className={shotFilter === value ? 'is-active' : ''} onClick={() => setShotFilter(value)}>{label}</button>)}

@@ -88,7 +88,7 @@ test('multi-project shooting progress persists without mobile overflow', async (
     await page.screenshot({ path: testInfo.outputPath('v2-mobile-project-list.png'), fullPage: true });
   }
 
-  await page.getByRole('link', { name: '打开一个人在日本散步 / 成田篇' }).click();
+  await page.getByRole('link', { name: '打开计划一个人在日本散步 / 成田篇' }).click();
   await expect(page.getByRole('heading', { name: '一个人在日本散步 / 成田篇' })).toBeVisible();
   await expect(page.getByRole('checkbox')).toHaveCount(38);
   await expect(page.locator('figure.reference-card')).toHaveCount(5);
@@ -135,11 +135,11 @@ test('multi-project shooting progress persists without mobile overflow', async (
   await expect(page.getByRole('checkbox', { name: '10 ★ 仲町下坡' })).toBeChecked();
 
   await page.getByRole('link', { name: '所有项目' }).click();
-  await page.getByRole('link', { name: '打开明天沿着港未来线溜达' }).click();
+  await page.getByRole('link', { name: '打开计划明天沿着港未来线溜达' }).click();
   await expect(page.getByTestId('progress-count')).toContainText('0 / 22组完成 · 0 / 36条');
 
   await page.getByRole('link', { name: '所有项目' }).click();
-  await page.getByRole('link', { name: '打开一个人在日本散步 / 成田篇' }).click();
+  await page.getByRole('link', { name: '打开计划一个人在日本散步 / 成田篇' }).click();
   await expect(page.getByRole('checkbox', { name: '10 ★ 仲町下坡' })).toBeChecked();
 
   const dimensions = await page.evaluate(() => ({ viewportWidth: window.innerWidth, pageWidth: document.documentElement.scrollWidth }));
